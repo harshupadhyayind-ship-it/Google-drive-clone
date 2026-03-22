@@ -1,4 +1,13 @@
-// app/(admin)/admin/page.tsx
+import { Badge } from "@/lib/ui/components/Badge";
+import { Section } from "@/lib/ui/components/Section";
+import { StatCard } from "@/lib/ui/components/StatCard";
+import { Table } from "@/lib/ui/components/Table";
+import {
+  Users,
+  FileText,
+  HardDrive,
+  Activity,
+} from "lucide-react";
 
 export default function AdminPage() {
   return (
@@ -6,90 +15,91 @@ export default function AdminPage() {
       {/* Title */}
       <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
 
-      {/* Stats Section */}
+      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 bg-white border rounded-lg shadow-sm">
-          <p className="text-sm text-gray-500">Total Users</p>
-          <h2 className="text-xl font-bold">120</h2>
-        </div>
-
-        <div className="p-4 bg-white border rounded-lg shadow-sm">
-          <p className="text-sm text-gray-500">Total Files</p>
-          <h2 className="text-xl font-bold">540</h2>
-        </div>
-
-        <div className="p-4 bg-white border rounded-lg shadow-sm">
-          <p className="text-sm text-gray-500">Storage Used</p>
-          <h2 className="text-xl font-bold">120 GB</h2>
-        </div>
-
-        <div className="p-4 bg-white border rounded-lg shadow-sm">
-          <p className="text-sm text-gray-500">Active Users</p>
-          <h2 className="text-xl font-bold">35</h2>
-        </div>
+        <StatCard
+          title="Total Users"
+          value="120"
+          icon={<Users size={18} />}
+          color="blue"
+        />
+        <StatCard
+          title="Total Files"
+          value="540"
+          icon={<FileText size={18} />}
+          color="green"
+        />
+        <StatCard
+          title="Storage Used"
+          value="120 GB"
+          icon={<HardDrive size={18} />}
+          color="purple"
+        />
+        <StatCard
+          title="Active Users"
+          value="35"
+          icon={<Activity size={18} />}
+          color="orange"
+        />
       </div>
 
       {/* Recent Users */}
-      <section>
-        <h2 className="text-lg font-medium mb-3">Recent Users</h2>
+      <Section title="Recent Users">
+        <Table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+            </tr>
+          </thead>
 
-        <div className="bg-white border rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-left">
-              <tr>
-                <th className="p-3">Name</th>
-                <th className="p-3">Email</th>
-                <th className="p-3">Role</th>
-              </tr>
-            </thead>
+          <tbody>
+            <tr>
+              <td>Harsh</td>
+              <td>harsh@mail.com</td>
+              <td>
+                <Badge variant="user">User</Badge>
+              </td>
+            </tr>
 
-            <tbody>
-              <tr className="border-t">
-                <td className="p-3">Harsh</td>
-                <td className="p-3">harsh@mail.com</td>
-                <td className="p-3">User</td>
-              </tr>
-
-              <tr className="border-t">
-                <td className="p-3">Admin</td>
-                <td className="p-3">admin@mail.com</td>
-                <td className="p-3">Admin</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+            <tr>
+              <td>Admin</td>
+              <td>admin@mail.com</td>
+              <td>
+                <Badge variant="admin">Admin</Badge>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </Section>
 
       {/* Recent Files */}
-      <section>
-        <h2 className="text-lg font-medium mb-3">Recent Files</h2>
+      <Section title="Recent Files">
+        <Table>
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Owner</th>
+              <th>Size</th>
+            </tr>
+          </thead>
 
-        <div className="bg-white border rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-left">
-              <tr>
-                <th className="p-3">File Name</th>
-                <th className="p-3">Owner</th>
-                <th className="p-3">Size</th>
-              </tr>
-            </thead>
+          <tbody>
+            <tr>
+              <td>Resume.pdf</td>
+              <td>Harsh</td>
+              <td>2 MB</td>
+            </tr>
 
-            <tbody>
-              <tr className="border-t">
-                <td className="p-3">Resume.pdf</td>
-                <td className="p-3">Harsh</td>
-                <td className="p-3">2 MB</td>
-              </tr>
-
-              <tr className="border-t">
-                <td className="p-3">Image.png</td>
-                <td className="p-3">Admin</td>
-                <td className="p-3">1.5 MB</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+            <tr>
+              <td>Image.png</td>
+              <td>Admin</td>
+              <td>1.5 MB</td>
+            </tr>
+          </tbody>
+        </Table>
+      </Section>
     </div>
   );
 }

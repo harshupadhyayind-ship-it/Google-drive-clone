@@ -1,54 +1,123 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Input } from "@/lib/ui/components/Input";
+import { Button } from "@/lib/ui/components/Button";
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+};
 
 export default function RegisterClient() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const router = useRouter();
 
-  const handleSubmit = async () => {
-    await fetch("/api/register", {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>();
+
+  const onSubmit = async (data: FormData) => {
+    const res = await fetch("/api/register", {
       method: "POST",
-      body: JSON.stringify(form),
+      body: JSON.stringify(data),
     });
 
-    window.location.href = "/login";
+    if (!res.ok) {
+      alert("User already exists");
+      return;
+    }
+
+    router.push("/login");
   };
 
   return (
-     <div className="flex h-screen items-center justify-center">
-      <div className="p-6 border rounded w-80 space-y-4">
-        <h1 className="text-xl font-semibold">Register</h1>
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-80 space-y-4 p-6 bg-white border rounded-xl shadow-sm"
+      >
+        <h1 className="text-xl font-semibold text-center">
+          Create Account
+        </h1>
 
-        <input
-          placeholder="Name"
-          className="border p-2 w-full"
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
+        {/* Name */}
+        <div>
+          <Input
+            placeholder="Full Name"
+            {...register("name", {
+              required: "Name is required",
+            })}
+          />
+          {errors.name && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.name.message}
+            </p>
+          )}
+        </div>
 
-        <input
-          placeholder="Email"
-          className="border p-2 w-full"
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
+        {/* Email */}
+        <div>
+          <Input
+            placeholder="Email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: "Invalid email",
+              },
+            })}
+          />
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="border p-2 w-full"
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
+        {/* Password */}
+        <div>
+          <Input
+            type="password"
+            placeholder="Password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 3,
+                message: "Minimum 3 characters",
+              },
+            })}
+          />
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
 
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-500 text-white w-full py-2"
+        {/* Submit */}
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSubmitting}
         >
-          Register
-        </button>
-      </div>
+          {isSubmitting ? "Creating..." : "Register"}
+        </Button>
+
+        {/* Footer */}
+        <p className="text-xs text-center text-gray-500">
+          Already have an account?{" "}
+          <span
+            className="text-blue-600 cursor-pointer"
+            onClick={() => router.push("/login")}
+          >
+            Login
+          </span>
+        </p>
+      </form>
     </div>
   );
 }

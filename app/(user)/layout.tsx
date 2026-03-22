@@ -1,6 +1,6 @@
 // app/(user)/layout.tsx
-import { Sidebar } from "@/libs/ui/layout/Sidebar";
-import { Navbar } from "@/libs/ui/layout/Navbar";
+import { Sidebar } from "@/lib/ui/layout/Sidebar";
+import { Navbar } from "@/lib/ui/layout/Navbar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";

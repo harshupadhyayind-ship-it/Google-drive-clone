@@ -1,8 +1,8 @@
 export const runtime = "nodejs";
 
 import bcrypt from "bcrypt";
-import { connectDB } from "@/libs/db/connect";
-import { User } from "@/libs/db/models/User";
+import { connectDB } from "@/lib/db/connect";
+import { User } from "@/lib/db/models/User";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 

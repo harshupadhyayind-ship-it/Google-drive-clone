@@ -1,5 +1,5 @@
-import { FolderCard } from "@/libs/ui/drive/FolderCard";
-import { FileCard } from "@/libs/ui/drive/FileCard";
+import { FolderCard } from "@/lib/ui/drive/FolderCard";
+import { FileCard } from "@/lib/ui/drive/FileCard";
 
 export default function DashboardPage() {
   return (

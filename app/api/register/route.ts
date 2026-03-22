@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { connectDB } from "@/libs/db/connect";
-import { User } from "@/libs/db/models/User";
+import { connectDB } from "@/lib/db/connect";
+import { User } from "@/lib/db/models/User";
 
 export async function POST(req: Request) {
   const { name, email, password } = await req.json();
