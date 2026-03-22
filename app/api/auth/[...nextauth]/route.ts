@@ -1,75 +1,58 @@
-import NextAuth, { DefaultSession } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+export const runtime = "nodejs";
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      role: "admin" | "user";
-    } & DefaultSession["user"];
-  }
+import bcrypt from "bcrypt";
+import { connectDB } from "@/libs/db/connect";
+import { User } from "@/libs/db/models/User";
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-  interface User {
-    role: "admin" | "user";
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    role: "admin" | "user";
-  }
-}
-
-export const { handlers, auth } = NextAuth({
+export const authOptions = {
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: {},
         password: {},
       },
+
       async authorize(credentials) {
-       if (!credentials) return null;
+        if (!credentials) return null;
 
         const email = credentials.email as string;
         const password = credentials.password as string;
 
-        if (email === "admin@mail.com" && password === "123") {
-          return {
-            id: "1",
-            name: "Admin",
-            email: "admin@mail.com",
-            role: "admin",
-          };
-        }
+        await connectDB();
 
-        if (
-          credentials.email === "user@mail.com" &&
-          credentials.password === "123"
-        ) {
-          return {
-            id: "2",
-            name: "User",
-            email: "user@mail.com",
-            role: "user",
-          };
-        }
+        const user = await User.findOne({ email });
+        if (!user) return null;
 
-        return null;
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) return null;  
+
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
-        token.role = user.role; // 👈 store role
+        token.role = user.role;
+        token.id = user.id;
       }
       return token;
     },
 
-    async session({ session, token }) {
-      session.user.role = token.role;
+    async session({ session, token }: any) {
+      if (session.user) {
+        session.user.role = token.role;
+        session.user.id = token.id;
+      }
       return session;
     },
   },
@@ -77,7 +60,13 @@ export const { handlers, auth } = NextAuth({
   pages: {
     signIn: "/login",
   },
-});
 
-export const GET = handlers.GET;
-export const POST = handlers.POST;
+  session: {
+    strategy: "jwt" as const,
+  },
+};
+
+// ✅ v4 correct export
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
