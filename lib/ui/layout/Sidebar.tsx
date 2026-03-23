@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   HardDrive,
   Clock,
   Star,
   Trash2,
   Upload,
+  FolderPlus,
 } from "lucide-react";
+import { useRef } from "react";
+
 import { Button } from "../components/Button";
 
 const menuItems = [
@@ -18,8 +21,41 @@ const menuItems = [
   { name: "Trash", path: "/dashboard/trash", icon: Trash2 },
 ];
 
-export const Sidebar = () => {
+export const Sidebar = ({ userId }: any) => {
   const pathname = usePathname();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const searchParams = useSearchParams();
+
+  // Get folderId directly from URL
+  const currentFolderId = searchParams.get("folderId");
+
+  // Upload File
+  const handleUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", userId);
+    formData.append("folderId", currentFolderId || "");
+
+    await fetch("/api/file", {
+      method: "POST",
+      body: formData,
+    });
+  };
+
+  // Create Folder
+  const handleCreateFolder = async () => {
+    const name = prompt("Enter folder name");
+    if (!name) return;
+
+    await fetch("/api/folder", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        parentId: currentFolderId,
+        userId,
+      }),
+    });
+  };
 
   return (
     <aside className="w-64 h-full bg-white border-r p-4 flex flex-col">
@@ -28,11 +64,36 @@ export const Sidebar = () => {
         Drive
       </h2>
 
-      {/* Upload Button */}
-      <Button className="mb-6 w-full flex items-center gap-2">
-        <Upload size={16} />
-        Upload
-      </Button>
+      {/* Upload Section */}
+      <div className="mb-6 space-y-2">
+        <Button
+          className="w-full flex items-center gap-2"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <Upload size={16} />
+          Upload File
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full flex items-center gap-2"
+          onClick={handleCreateFolder}
+        >
+          <FolderPlus size={16} />
+          New Folder
+        </Button>
+
+        {/* Hidden file input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleUpload(file);
+          }}
+        />
+      </div>
 
       {/* Menu */}
       <nav className="flex flex-col gap-1">
