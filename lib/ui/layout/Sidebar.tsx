@@ -21,7 +21,7 @@ const menuItems = [
   { name: "Trash", path: "/dashboard/trash", icon: Trash2 },
 ];
 
-export const Sidebar = ({ userId }: any) => {
+export const Sidebar = ({ userId }: {userId: string}) => {
   const pathname = usePathname();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const searchParams = useSearchParams();

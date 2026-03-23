@@ -14,7 +14,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      <Sidebar userId={session.user?.id} />
 
       <div className="flex-1 flex flex-col">
         <Navbar />
