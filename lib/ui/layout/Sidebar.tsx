@@ -45,8 +45,6 @@ export const Sidebar = ({ userId }: {userId: string}) => {
 
   const saved = await res.json();
 
-  console.log({saved})
-
   // replace temp
   setFiles((prev:any)=> [saved, ...prev]);
 };

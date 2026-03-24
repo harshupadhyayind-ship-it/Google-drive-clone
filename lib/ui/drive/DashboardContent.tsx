@@ -8,8 +8,6 @@ import { FileCard } from "./FileCard";
 export const DashboardContent = () => {
   const { folders, files } = useDrive();
 
-  console.log({folders, files})
-
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">My Drive</h1>
@@ -25,13 +23,12 @@ export const DashboardContent = () => {
           )}
 
           {folders.map((folder: any) => (
-            <a
-              key={folder._id}
-              href={`/dashboard?folderId=${folder._id}`}
-            >
-              <FolderCard name={folder.name} />
-            </a>
-          ))}
+  <FolderCard
+    key={folder._id}
+    name={folder.name}
+    href={`/dashboard?folderId=${folder._id}`}
+  />
+))}
         </div>
       </section>
 
@@ -46,10 +43,12 @@ export const DashboardContent = () => {
           )}
 
           {files.map((file: any) => (
-            <a key={file._id} href={file.url} target="_blank">
-              <FileCard name={file.name} />
-            </a>
-          ))}
+  <FileCard
+    key={file._id}
+    name={file.name}
+    href={file.url}
+  />
+))}
         </div>
       </section>
     </div>
