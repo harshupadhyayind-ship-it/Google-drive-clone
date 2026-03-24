@@ -21,56 +21,57 @@ export async function getDriveData(userId: string, parentId: string | null) {
   };
 }
 
-export async function uploadFile({
-  file,
-  userId,
-  folderId,
-}: {
-  file: File;
-  userId: string;
-  folderId?: string | null;
-}) {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("userId", userId);
-  formData.append("folderId", folderId || "");
+// export async function uploadFile({
+//   file,
+//   userId,
+//   folderId,
+// }: {
+//   file: File;
+//   userId: string;
+//   folderId?: string | null;
+// }) {
+//   const formData = new FormData();
+//   formData.append("file", file);
+//   formData.append("userId", userId);
+//   formData.append("folderId", folderId || "");
 
-  const res = await fetch("/api/file", {
-    method: "POST",
-    body: formData,
-  });
+//   const res = await fetch("/api/file", {
+//     method: "POST",
+//     body: formData,
+//   });
 
-  if (!res.ok) {
-    throw new Error("Upload failed");
-  }
+//   if (!res.ok) {
+//     throw new Error("Upload failed");
+//   }
 
-  return res.json();
-}
+//   return res.json();
+// }
 
-export async function createFolder({
-  name,
-  userId,
-  parentId,
-}: {
-  name: string;
-  userId: string;
-  parentId?: string | null;
-}) {
-  const res = await fetch("/api/folder", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name,
-      userId,
-      parentId,
-    }),
-  });
+// export async function createFolder({
+//   name,
+//   userId,
+//   parentId,
+// }: {
+//   name: string;
+//   userId: string;
+//   parentId?: string | null;
+// }) {
+//   const res = await fetch("/api/folder", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       name,
+//       userId,
+//       parentId,
+//     }),
+//   });
 
-  if (!res.ok) {
-    throw new Error("Folder creation failed");
-  }
+//   if (!res.ok) {
+//     throw new Error("Folder creation failed");
+//   }
 
-  return res.json();
-}
+//   return res.json();
+// }
+
