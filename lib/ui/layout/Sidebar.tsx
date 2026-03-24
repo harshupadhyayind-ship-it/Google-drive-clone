@@ -21,11 +21,11 @@ const menuItems = [
   { name: "Trash", path: "/dashboard/trash", icon: Trash2 },
 ];
 
-export const Sidebar = ({ userId }: {userId: string}) => {
+export const Sidebar = ({ userId }: { userId: string }) => {
   const pathname = usePathname();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const searchParams = useSearchParams();
-  const { setFiles, user, setFolders  } = useDrive();
+  const { setFiles, user, setFolders } = useDrive();
 
   // Get folderId directly from URL
   const currentFolderId = searchParams.get("folderId");
@@ -33,43 +33,43 @@ export const Sidebar = ({ userId }: {userId: string}) => {
   // Upload File
   const handleUpload = async (file: File) => {
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("userId", user.id);
-  formData.append("folderId", currentFolderId || "");
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", user.id);
+    formData.append("folderId", currentFolderId || "");
 
-  const res = await fetch("/api/file", {
-    method: "POST",
-    body: formData,
-  });
+    const res = await fetch("/api/file", {
+      method: "POST",
+      body: formData,
+    });
 
-  const saved = await res.json();
+    const saved = await res.json();
 
-  // replace temp
-  setFiles((prev:any)=> [saved, ...prev]);
-};
+    // replace temp
+    setFiles((prev: any) => [saved, ...prev]);
+  };
 
   // Create Folder
   const handleCreateFolder = async () => {
-  const name = prompt("Enter folder name");
-  if (!name) return;
+    const name = prompt("Enter folder name");
+    if (!name) return;
 
-  const res = await fetch("/api/folder", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name,
-      parentId: currentFolderId,
-      userId,
-    }),
-  });
+    const res = await fetch("/api/folder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        parentId: currentFolderId,
+        userId,
+      }),
+    });
 
-  const saved = await res.json();
+    const saved = await res.json();
 
-  setFolders((prev:any)=> [saved, ...prev]);
-};
+    setFolders((prev: any) => [saved, ...prev]);
+  };
 
   return (
     <aside className="w-64 h-full bg-white border-r p-4 flex flex-col">
@@ -119,11 +119,10 @@ export const Sidebar = ({ userId }: {userId: string}) => {
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive
-                  ? "bg-blue-100 text-blue-600 font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
+                ? "bg-blue-100 text-blue-600 font-medium"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
             >
               <Icon size={18} />
               {item.name}

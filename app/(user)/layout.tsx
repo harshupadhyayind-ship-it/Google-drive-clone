@@ -15,30 +15,30 @@ export default async function UserLayout({ children, searchParams }: { children:
   }
 
   const params = await searchParams;
-  
-    const userId = session?.user?.id;
-    const parentId = params?.folderId || null;
-  
-    const { folders, files } = await getDriveData(userId, parentId);
+
+  const userId = session?.user?.id;
+  const parentId = params?.folderId || null;
+
+  const { folders, files } = await getDriveData(userId, parentId);
 
   return (
     <div className="flex h-screen">
       <DriveProvider
-            initialData={{
-              user: session.user,
-              folders,
-              files,
-              currentFolderId: parentId,
-            }}
-          >
+        initialData={{
+          user: session.user,
+          folders,
+          files,
+          currentFolderId: parentId,
+        }}
+      >
 
-      <Sidebar userId={session.user?.id} />
+        <Sidebar userId={session.user?.id} />
 
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="p-4 overflow-auto">{children}</main>
-      </div>
-          </DriveProvider>
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <main className="p-4 overflow-auto">{children}</main>
+        </div>
+      </DriveProvider>
     </div>
   );
 }

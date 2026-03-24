@@ -23,12 +23,12 @@ export const DashboardContent = () => {
           )}
 
           {folders.map((folder: any) => (
-  <FolderCard
-    key={folder._id}
-    name={folder.name}
-    href={`/dashboard?folderId=${folder._id}`}
-  />
-))}
+            <FolderCard
+              key={folder._id}
+              name={folder.name}
+              href={`/dashboard?folderId=${folder._id}`}
+            />
+          ))}
         </div>
       </section>
 
@@ -43,12 +43,12 @@ export const DashboardContent = () => {
           )}
 
           {files.map((file: any) => (
-  <FileCard
-    key={file._id}
-    name={file.name}
-    href={file.url}
-  />
-))}
+            <FileCard
+              key={file._id}
+              name={file.name}
+              href={file.url}
+            />
+          ))}
         </div>
       </section>
     </div>

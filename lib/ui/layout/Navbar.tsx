@@ -14,7 +14,7 @@ export const Navbar = () => {
 
   return (
     <header className="h-14 border-b bg-white flex items-center px-4 justify-between">
-      {/* 🔍 Search */}
+      {/* Search */}
       <div className="relative w-1/2">
         <Search
           size={16}
