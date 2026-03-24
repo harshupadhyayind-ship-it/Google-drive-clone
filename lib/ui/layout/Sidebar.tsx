@@ -11,8 +11,8 @@ import {
   FolderPlus,
 } from "lucide-react";
 import { useRef } from "react";
-
 import { Button } from "../components/Button";
+import { useDrive } from "@/lib/context/DriveContext";
 
 const menuItems = [
   { name: "My Drive", path: "/dashboard", icon: HardDrive },
@@ -25,37 +25,53 @@ export const Sidebar = ({ userId }: {userId: string}) => {
   const pathname = usePathname();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const searchParams = useSearchParams();
+  const { setFiles, user, setFolders  } = useDrive();
 
   // Get folderId directly from URL
   const currentFolderId = searchParams.get("folderId");
 
   // Upload File
   const handleUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userId", userId);
-    formData.append("folderId", currentFolderId || "");
 
-    await fetch("/api/file", {
-      method: "POST",
-      body: formData,
-    });
-  };
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("userId", user.id);
+  formData.append("folderId", currentFolderId || "");
+
+  const res = await fetch("/api/file", {
+    method: "POST",
+    body: formData,
+  });
+
+  const saved = await res.json();
+
+  console.log({saved})
+
+  // replace temp
+  setFiles((prev:any)=> [saved, ...prev]);
+};
 
   // Create Folder
   const handleCreateFolder = async () => {
-    const name = prompt("Enter folder name");
-    if (!name) return;
+  const name = prompt("Enter folder name");
+  if (!name) return;
 
-    await fetch("/api/folder", {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        parentId: currentFolderId,
-        userId,
-      }),
-    });
-  };
+  const res = await fetch("/api/folder", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      parentId: currentFolderId,
+      userId,
+    }),
+  });
+
+  const saved = await res.json();
+
+  setFolders((prev:any)=> [saved, ...prev]);
+};
 
   return (
     <aside className="w-64 h-full bg-white border-r p-4 flex flex-col">
