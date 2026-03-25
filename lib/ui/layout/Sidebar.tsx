@@ -92,7 +92,11 @@ export const Sidebar = ({ userId }: { userId: string }) => {
   return (
     <aside className="w-64 h-full bg-white border-r p-4 flex flex-col">
       {/* Logo */}
-      <h2 className="text-xl font-semibold mb-6 px-2">Drive</h2>
+      <h2 className="text-xl font-semibold mb-6 px-2">
+        <Link href="/dashboard">
+          Drive
+        </Link>
+      </h2>
 
       {/* ✅ NEW BUTTON (Dropdown) */}
       <div className="mb-6">
@@ -141,11 +145,10 @@ export const Sidebar = ({ userId }: { userId: string }) => {
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
                   ? "bg-blue-100 text-blue-600 font-medium"
                   : "text-gray-700 hover:bg-gray-100"
-              }`}
+                }`}
             >
               <Icon size={18} />
               {item.name}
