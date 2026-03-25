@@ -92,11 +92,9 @@ export const Sidebar = ({ userId }: { userId: string }) => {
   return (
     <aside className="w-64 h-full bg-white border-r p-4 flex flex-col">
       {/* Logo */}
-      <h2 className="text-xl font-semibold mb-6 px-2">
-        <Link href="/dashboard">
-          Drive
-        </Link>
-      </h2>
+      <Link href="/dashboard" className="text-xl font-semibold mb-6 px-2 block">
+        Drive
+      </Link>
 
       {/* ✅ NEW BUTTON (Dropdown) */}
       <div className="mb-6">
