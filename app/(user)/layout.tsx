@@ -7,14 +7,20 @@ import { redirect } from "next/navigation";
 import { DriveProvider } from "@/lib/context/DriveContext";
 import { getDriveData } from "@/lib/services/drive";
 
-export default async function UserLayout({ children, searchParams }: { children: React.ReactNode, searchParams: Promise<{ folderId?: string }> }) {
+export default async function UserLayout({
+  children,
+  searchParams,
+}: {
+  children: React.ReactNode;
+  searchParams: { folderId?: string };
+}) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
     redirect("/login");
   }
 
-  const params = await searchParams;
+  const params = searchParams;
 
   const userId = session?.user?.id;
   const parentId = params?.folderId || null;
@@ -24,6 +30,7 @@ export default async function UserLayout({ children, searchParams }: { children:
   return (
     <div className="flex h-screen">
       <DriveProvider
+        key={parentId ?? "root"}
         initialData={{
           user: session.user,
           folders,

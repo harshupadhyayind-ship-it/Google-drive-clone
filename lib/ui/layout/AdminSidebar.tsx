@@ -30,11 +30,10 @@ export const AdminSidebar = () => {
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
                   ? "bg-gray-800 text-white font-medium"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
-              }`}
+                }`}
             >
               <Icon size={18} />
               {item.name}

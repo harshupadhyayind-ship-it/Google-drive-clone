@@ -4,13 +4,32 @@
 import { useDrive } from "@/lib/context/DriveContext";
 import { FolderCard } from "./FolderCard";
 import { FileCard } from "./FileCard";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export const DashboardContent = () => {
-  const { folders, files } = useDrive();
+  const searchParams = useSearchParams();
+  const { folders, files, refreshDriveData, currentFolderId, isSyncing } =
+    useDrive();
+
+  const parentId = searchParams.get("folderId") ?? null;
+
+  // When `?folderId=...` changes, refetch folder contents from the API.
+  // This prevents stale state when Next doesn't remount server layouts.
+  useEffect(() => {
+    if (parentId === currentFolderId) return;
+    refreshDriveData(parentId);
+  }, [parentId, currentFolderId, refreshDriveData]);
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">My Drive</h1>
+
+      {isSyncing && (
+        <p className="text-sm text-gray-500" aria-live="polite">
+          Loading folder contents...
+        </p>
+      )}
 
       <section>
         <h2 className="mb-3 text-sm font-medium text-gray-600">

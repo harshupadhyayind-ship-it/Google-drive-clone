@@ -29,17 +29,25 @@ export async function GET(req: Request) {
   const parentId = searchParams.get("parentId");
   const userId = searchParams.get("userId");
 
+  if (!userId) {
+    return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+  }
+
   await connectDB();
 
   const folders = await Folder.find({
     userId,
     parentId: parentId || null,
-  });
+  }).sort({ createdAt: -1 });
 
   const files = await File.find({
     userId,
     folderId: parentId || null,
-  });
+  }).sort({ createdAt: -1 });
 
-  return NextResponse.json({ folders, files });
+  // Ensure ObjectIds are JSON-serializable.
+  return NextResponse.json({
+    folders: JSON.parse(JSON.stringify(folders)),
+    files: JSON.parse(JSON.stringify(files)),
+  });
 }
