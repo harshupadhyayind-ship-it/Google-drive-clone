@@ -9,10 +9,26 @@ import {
   Trash2,
   Upload,
   FolderPlus,
+  Plus,
 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../components/Button";
 import { useDrive } from "@/lib/context/DriveContext";
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/lib/ui/components/Menu/dropdown-menu";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/lib/ui/components/Dialog/dialog";
 
 const menuItems = [
   { name: "My Drive", path: "/dashboard", icon: HardDrive },
@@ -23,16 +39,19 @@ const menuItems = [
 
 export const Sidebar = ({ userId }: { userId: string }) => {
   const pathname = usePathname();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const searchParams = useSearchParams();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const { setFiles, user, setFolders } = useDrive();
 
-  // Get folderId directly from URL
   const currentFolderId = searchParams.get("folderId");
+
+  // Dialog state
+  const [open, setOpen] = useState(false);
+  const [folderName, setFolderName] = useState("");
 
   // Upload File
   const handleUpload = async (file: File) => {
-
     const formData = new FormData();
     formData.append("file", file);
     formData.append("userId", user.id);
@@ -44,15 +63,12 @@ export const Sidebar = ({ userId }: { userId: string }) => {
     });
 
     const saved = await res.json();
-
-    // replace temp
     setFiles((prev: any) => [saved, ...prev]);
   };
 
   // Create Folder
   const handleCreateFolder = async () => {
-    const name = prompt("Enter folder name");
-    if (!name) return;
+    if (!folderName) return;
 
     const res = await fetch("/api/folder", {
       method: "POST",
@@ -60,42 +76,48 @@ export const Sidebar = ({ userId }: { userId: string }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
+        name: folderName,
         parentId: currentFolderId,
         userId,
       }),
     });
 
     const saved = await res.json();
-
     setFolders((prev: any) => [saved, ...prev]);
+
+    setFolderName("");
+    setOpen(false);
   };
 
   return (
     <aside className="w-64 h-full bg-white border-r p-4 flex flex-col">
       {/* Logo */}
-      <h2 className="text-xl font-semibold mb-6 px-2">
-        Drive
-      </h2>
+      <h2 className="text-xl font-semibold mb-6 px-2">Drive</h2>
 
-      {/* Upload Section */}
-      <div className="mb-6 space-y-2">
-        <Button
-          className="w-full flex items-center gap-2"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Upload size={16} />
-          Upload File
-        </Button>
+      {/* ✅ NEW BUTTON (Dropdown) */}
+      <div className="mb-6">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="w-full flex items-center gap-2">
+              <Plus size={16} />
+              New
+            </Button>
+          </DropdownMenuTrigger>
 
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2"
-          onClick={handleCreateFolder}
-        >
-          <FolderPlus size={16} />
-          New Folder
-        </Button>
+          <DropdownMenuContent className="w-48">
+            <DropdownMenuItem
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload size={16} className="mr-2" />
+              Upload File
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <FolderPlus size={16} className="mr-2" />
+              New Folder
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Hidden file input */}
         <input
@@ -119,10 +141,11 @@ export const Sidebar = ({ userId }: { userId: string }) => {
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
-                ? "bg-blue-100 text-blue-600 font-medium"
-                : "text-gray-700 hover:bg-gray-100"
-                }`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                isActive
+                  ? "bg-blue-100 text-blue-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
             >
               <Icon size={18} />
               {item.name}
@@ -136,13 +159,39 @@ export const Sidebar = ({ userId }: { userId: string }) => {
         <p className="text-xs text-gray-500 mb-1">Storage</p>
 
         <div className="w-full bg-gray-200 h-2 rounded">
-          <div className="bg-blue-500 h-2 rounded w-1/3 transition-all" />
+          <div className="bg-blue-500 h-2 rounded w-1/3" />
         </div>
 
         <p className="text-xs mt-1 text-gray-600">
           5GB of 15GB used
         </p>
       </div>
+
+      {/* ✅ CREATE FOLDER DIALOG */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Folder</DialogTitle>
+          </DialogHeader>
+
+          <input
+            className="w-full border rounded px-3 py-2 text-sm"
+            placeholder="Enter folder name"
+            value={folderName}
+            onChange={(e) => setFolderName(e.target.value)}
+          />
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+
+            <Button onClick={handleCreateFolder}>
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 };

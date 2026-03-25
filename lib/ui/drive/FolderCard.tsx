@@ -1,26 +1,74 @@
-// lib/ui/drive/FolderCard.tsx
+"use client";
 
 import Link from "next/link";
-import { Folder } from "lucide-react";
+import { Folder, Pencil, Download, Trash } from "lucide-react";
+import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 
 type Props = {
   name: string;
   href: string;
+  onRename?: () => void;
+  onDownload?: () => void;
+  onMoveToTrash?: () => void;
 };
 
-export const FolderCard = ({ name, href }: Props) => {
+export const FolderCard = ({
+  name,
+  href,
+  onRename,
+  onDownload,
+  onMoveToTrash,
+}: Props) => {
+  const menuItems: MenuItem[] = [
+    {
+      label: "Rename",
+      icon: <Pencil className="h-4 w-4" />,
+      onClick: (e?: any) => {
+        e?.stopPropagation();
+        onRename?.();
+      },
+    },
+    {
+      label: "Download",
+      icon: <Download className="h-4 w-4" />,
+      onClick: (e?: any) => {
+        e?.stopPropagation();
+        onDownload?.();
+      },
+    },
+    { separator: true },
+    {
+      label: "Move to Trash",
+      icon: <Trash className="h-4 w-4" />,
+      variant: "destructive",
+      onClick: (e?: any) => {
+        e?.stopPropagation();
+        onMoveToTrash?.();
+      },
+    },
+  ];
+
   return (
     <Link href={href}>
-      <div className="group flex items-center gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-yellow-400 transition-all cursor-pointer">
-        {/* Icon */}
-        <div className="p-2 bg-yellow-100 text-yellow-600 rounded-lg">
-          <Folder size={18} />
+      <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-yellow-400 transition-all cursor-pointer">
+        
+        {/* LEFT SIDE */}
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="p-2 bg-yellow-100 text-yellow-600 rounded-lg">
+            <Folder size={18} />
+          </div>
+
+          <p className="text-sm font-medium text-gray-800 truncate group-hover:text-yellow-600">
+            {name}
+          </p>
         </div>
 
-        {/* Name */}
-        <p className="text-sm font-medium text-gray-800 truncate group-hover:text-yellow-600">
-          {name}
-        </p>
+        {/* RIGHT SIDE MENU */}
+        <div
+          onClick={(e) => e.stopPropagation()} // prevent link click
+        >
+          <DriveMenu items={menuItems} />
+        </div>
       </div>
     </Link>
   );
