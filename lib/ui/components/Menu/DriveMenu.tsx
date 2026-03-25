@@ -46,7 +46,10 @@ export const DriveMenu = ({ items, trigger }: DriveMenuProps) => {
           ) : (
             <DropdownMenuItem
               key={index}
-              onClick={item.onClick}
+              onSelect={(e) => {
+                e.preventDefault();
+                item.onClick?.();
+              }}
               disabled={item.disabled}
               className={
                 item.variant === "destructive" ? "text-red-500" : ""
