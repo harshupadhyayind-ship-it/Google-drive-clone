@@ -22,13 +22,7 @@ import {
   DropdownMenuItem,
 } from "@/lib/ui/components/Menu/dropdown-menu";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/lib/ui/components/Dialog/dialog";
+import { InputDialog } from "@/lib/ui/components/InputDialog";
 
 const menuItems = [
   { name: "My Drive", path: "/dashboard", icon: HardDrive },
@@ -168,31 +162,16 @@ export const Sidebar = ({ userId }: { userId: string }) => {
         </p>
       </div>
 
-      {/* ✅ CREATE FOLDER DIALOG */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>New Folder</DialogTitle>
-          </DialogHeader>
-
-          <input
-            className="w-full border rounded px-3 py-2 text-sm"
-            placeholder="Enter folder name"
-            value={folderName}
-            onChange={(e) => setFolderName(e.target.value)}
-          />
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-
-            <Button onClick={handleCreateFolder}>
-              Create
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <InputDialog
+        open={open}
+        onOpenChange={setOpen}
+        title="New Folder"
+        placeholder="Enter folder name"
+        value={folderName}
+        onChange={setFolderName}
+        onConfirm={handleCreateFolder}
+        confirmLabel="Create"
+      />
     </aside>
   );
 };
