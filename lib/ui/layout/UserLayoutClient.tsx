@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
+import { ToastProvider } from "@/lib/context/ToastContext";
 
 type Props = {
   userId: string;
@@ -13,7 +14,7 @@ export const UserLayoutClient = ({ userId, children }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <>
+    <ToastProvider>
       <Sidebar
         userId={userId}
         isOpen={sidebarOpen}
@@ -23,6 +24,6 @@ export const UserLayoutClient = ({ userId, children }: Props) => {
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
         <main className="p-4 overflow-auto flex-1">{children}</main>
       </div>
-    </>
+    </ToastProvider>
   );
 };

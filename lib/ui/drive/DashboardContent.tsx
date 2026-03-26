@@ -2,6 +2,7 @@
 "use client";
 
 import { useDrive } from "@/lib/context/DriveContext";
+import { useToast } from "@/lib/context/ToastContext";
 import { FolderCard } from "./FolderCard";
 import { FileCard } from "./FileCard";
 import { useSearchParams } from "next/navigation";
@@ -21,6 +22,7 @@ export const DashboardContent = () => {
 
   const parentId = searchParams.get("folderId") ?? null;
 
+  const toast = useToast();
   const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
   const [renameName, setRenameName] = useState("");
 
@@ -40,23 +42,26 @@ export const DashboardContent = () => {
     const { id, type } = renameTarget;
     const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
 
-    const res = await fetch(endpoint, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: renameName.trim() }),
-    });
-
-    const updated = await res.json();
-    console.log({updated})
-
-    if (type === "file") {
-      setFiles((prev: any[]) =>
-        prev.map((f) => (f._id === id ? { ...f, name: updated?.name } : f))
-      );
-    } else {
-      setFolders((prev: any[]) =>
-        prev.map((f) => (f._id === id ? { ...f, name: updated?.name } : f))
-      );
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: renameName.trim() }),
+      });
+      if (!res.ok) throw new Error();
+      const updated = await res.json();
+      if (type === "file") {
+        setFiles((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, name: updated?.name } : f))
+        );
+      } else {
+        setFolders((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, name: updated?.name } : f))
+        );
+      }
+      toast.success("Renamed successfully");
+    } catch {
+      toast.error("Failed to rename");
     }
 
     setRenameTarget(null);
@@ -65,36 +70,46 @@ export const DashboardContent = () => {
   const handleStar = async (id: string, type: "file" | "folder", isStarred: boolean) => {
     const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
 
-    await fetch(endpoint, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isStarred }),
-    });
-
-    if (type === "file") {
-      setFiles((prev: any[]) =>
-        prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
-      );
-    } else {
-      setFolders((prev: any[]) =>
-        prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
-      );
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isStarred }),
+      });
+      if (!res.ok) throw new Error();
+      if (type === "file") {
+        setFiles((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
+        );
+      } else {
+        setFolders((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
+        );
+      }
+      toast.success(isStarred ? "Added to starred" : "Removed from starred");
+    } catch {
+      toast.error("Failed to update starred");
     }
   };
 
   const handleMoveToTrash = async (id: string, type: "file" | "folder") => {
     const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
 
-    await fetch(endpoint, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isTrashed: true }),
-    });
-
-    if (type === "file") {
-      setFiles((prev: any[]) => prev.filter((f) => f._id !== id));
-    } else {
-      setFolders((prev: any[]) => prev.filter((f) => f._id !== id));
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isTrashed: true }),
+      });
+      if (!res.ok) throw new Error();
+      if (type === "file") {
+        setFiles((prev: any[]) => prev.filter((f) => f._id !== id));
+      } else {
+        setFolders((prev: any[]) => prev.filter((f) => f._id !== id));
+      }
+      toast.success("Moved to trash");
+    } catch {
+      toast.error("Failed to move to trash");
     }
   };
 

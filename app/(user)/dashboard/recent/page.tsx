@@ -11,5 +11,5 @@ export default async function RecentPage() {
 
   const { items } = await getRecentData(userId);
 
-  return <RecentContent items={items} />;
+  return <RecentContent initialItems={items} />;
 }

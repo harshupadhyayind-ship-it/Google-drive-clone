@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Folder, FileText, RotateCcw, Trash2 } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Folder, FileText, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/lib/ui/components/Button";
+import { useToast } from "@/lib/context/ToastContext";
+import { useInfiniteScroll } from "@/lib/hooks/useInfiniteScroll";
+import { useDrive } from "@/lib/context/DriveContext";
 
 type Item = {
   _id: string;
@@ -16,53 +19,69 @@ type Props = {
 };
 
 export const TrashContent = ({ initialFolders, initialFiles }: Props) => {
-  const [folders, setFolders] = useState(initialFolders);
-  const [files, setFiles] = useState(initialFiles);
+  const { user } = useDrive();
+  const toast = useToast();
+
+  const initialItems: Item[] = [
+    ...initialFolders.map((f) => ({ _id: f._id, name: f.name, type: "folder" as const })),
+    ...initialFiles.map((f) => ({ _id: f._id, name: f.name, type: "file" as const })),
+  ];
+
+  const fetchFn = useCallback(async (page: number) => {
+    const res = await fetch(`/api/trash?userId=${user?.id}&page=${page}`);
+    if (!res.ok) throw new Error("Failed to load");
+    const data = await res.json();
+    const items: Item[] = [
+      ...(data.folders ?? []).map((f: any) => ({ _id: f._id, name: f.name, type: "folder" as const })),
+      ...(data.files ?? []).map((f: any) => ({ _id: f._id, name: f.name, type: "file" as const })),
+    ];
+    return { items, hasMore: data.hasMore };
+  }, [user?.id]);
+
+  const { items, setItems, loading, hasMore, sentinelRef } = useInfiniteScroll({
+    fetchFn,
+    initialItems,
+  });
 
   const handleRestore = async (id: string, type: "file" | "folder") => {
     const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
-
-    await fetch(endpoint, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isTrashed: false }),
-    });
-
-    if (type === "file") {
-      setFiles((prev) => prev.filter((f) => f._id !== id));
-    } else {
-      setFolders((prev) => prev.filter((f) => f._id !== id));
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isTrashed: false }),
+      });
+      if (!res.ok) throw new Error();
+      setItems((prev) => prev.filter((f) => f._id !== id));
+      toast.success("Restored successfully");
+    } catch {
+      toast.error("Failed to restore item");
     }
   };
 
   const handleDeletePermanently = async (id: string, type: "file" | "folder") => {
     const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
-
-    await fetch(endpoint, { method: "DELETE" });
-
-    if (type === "file") {
-      setFiles((prev) => prev.filter((f) => f._id !== id));
-    } else {
-      setFolders((prev) => prev.filter((f) => f._id !== id));
+    try {
+      const res = await fetch(endpoint, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setItems((prev) => prev.filter((f) => f._id !== id));
+      toast.success("Deleted permanently");
+    } catch {
+      toast.error("Failed to delete item");
     }
   };
-
-  const allItems: Item[] = [
-    ...folders.map((f) => ({ _id: f._id, name: f.name, type: "folder" as const })),
-    ...files.map((f) => ({ _id: f._id, name: f.name, type: "file" as const })),
-  ];
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">Trash</h1>
 
-      {allItems.length === 0 ? (
+      {items.length === 0 && !loading ? (
         <p className="text-sm text-gray-400">Trash is empty</p>
       ) : (
         <div className="flex flex-col gap-2">
-          {allItems.map((item) => (
+          {items.map((item, i) => (
             <div
-              key={item._id}
+              key={item._id ?? i}
               className="flex items-center justify-between p-3 border rounded-xl bg-white"
             >
               <div className="flex items-center gap-3">
@@ -73,27 +92,23 @@ export const TrashContent = ({ initialFolders, initialFiles }: Props) => {
               </div>
 
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRestore(item._id, item.type)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleRestore(item._id, item.type)}>
                   <RotateCcw size={15} className="mr-1" />
                   Restore
                 </Button>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-500 hover:text-red-600"
-                  onClick={() => handleDeletePermanently(item._id, item.type)}
-                >
+                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600" onClick={() => handleDeletePermanently(item._id, item.type)}>
                   <Trash2 size={15} className="mr-1" />
                   Delete
                 </Button>
               </div>
             </div>
           ))}
+
+          {/* Infinite scroll sentinel */}
+          <div ref={sentinelRef} className="py-2 flex justify-center">
+            {loading && <Loader2 size={18} className="animate-spin text-gray-400" />}
+            {!hasMore && items.length > 0 && <p className="text-xs text-gray-400">No more items</p>}
+          </div>
         </div>
       )}
     </div>

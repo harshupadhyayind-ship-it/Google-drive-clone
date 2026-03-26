@@ -1,7 +1,10 @@
 "use client";
 
-import { Folder, FileText } from "lucide-react";
+import { useCallback } from "react";
+import { Folder, FileText, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useInfiniteScroll } from "@/lib/hooks/useInfiniteScroll";
+import { useDrive } from "@/lib/context/DriveContext";
 
 type Item = {
   _id: string;
@@ -12,27 +15,41 @@ type Item = {
 };
 
 type Props = {
-  items: Item[];
+  initialItems: Item[];
 };
 
-export const RecentContent = ({ items }: Props) => {
+export const RecentContent = ({ initialItems }: Props) => {
+  const { user } = useDrive();
+
+  const fetchFn = useCallback(async (page: number) => {
+    const res = await fetch(`/api/recent?userId=${user?.id}&page=${page}`);
+    if (!res.ok) throw new Error("Failed to load");
+    const data = await res.json();
+    return { items: data.items ?? [], hasMore: data.hasMore };
+  }, [user?.id]);
+
+  const { items, loading, hasMore, sentinelRef } = useInfiniteScroll({
+    fetchFn,
+    initialItems,
+  });
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">Recent</h1>
 
-      {items.length === 0 ? (
+      {items.length === 0 && !loading ? (
         <p className="text-sm text-gray-400">No recent items</p>
       ) : (
         <div className="flex flex-col gap-2">
-          {items.map((item) => {
+          {items.map((item: Item, i: number) => {
             const href =
               item.type === "folder"
-                ? `/dashboard?folderId=${item._id}`
+                ? `/?folderId=${item._id}`
                 : item.url ?? "#";
 
             return (
               <Link
-                key={item._id}
+                key={item._id ?? i}
                 href={href}
                 target={item.type === "file" ? "_blank" : undefined}
               >
@@ -56,6 +73,12 @@ export const RecentContent = ({ items }: Props) => {
               </Link>
             );
           })}
+
+          {/* Infinite scroll sentinel */}
+          <div ref={sentinelRef} className="py-2 flex justify-center">
+            {loading && <Loader2 size={18} className="animate-spin text-gray-400" />}
+            {!hasMore && items.length > 0 && <p className="text-xs text-gray-400">No more items</p>}
+          </div>
         </div>
       )}
     </div>

@@ -29,6 +29,9 @@ export async function GET(req: Request) {
 
   const parentId = searchParams.get("parentId");
   const userId = searchParams.get("userId");
+  const page = parseInt(searchParams.get("page") ?? "1", 10);
+  const LIMIT = 20;
+  const skip = (page - 1) * LIMIT;
 
   if (!userId) {
     return NextResponse.json({ error: "Missing userId" }, { status: 400 });
@@ -40,17 +43,18 @@ export async function GET(req: Request) {
     userId,
     parentId: parentId || null,
     isTrashed: { $ne: true },
-  }).sort({ createdAt: -1 });
+  }).sort({ createdAt: -1 }).skip(skip).limit(LIMIT);
 
   const files = await File.find({
     userId,
     folderId: parentId || null,
     isTrashed: { $ne: true },
-  }).sort({ createdAt: -1 });
+  }).sort({ createdAt: -1 }).skip(skip).limit(LIMIT);
 
   // Ensure ObjectIds are JSON-serializable.
   return NextResponse.json({
     folders: JSON.parse(JSON.stringify(folders)),
     files: JSON.parse(JSON.stringify(files)),
+    hasMore: folders.length === LIMIT || files.length === LIMIT,
   });
 }
