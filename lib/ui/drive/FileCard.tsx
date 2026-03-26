@@ -3,12 +3,14 @@
 import { getFileIcon } from "@/lib/utils/fileIcon";
 import Link from "next/link";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
-import { Pencil, Download, Trash } from "lucide-react";
+import { Pencil, Download, Trash, Star } from "lucide-react";
 
 type Props = {
   name: string;
   href: string;
+  isStarred?: boolean;
   onRename?: () => void;
+  onStar?: () => void;
   onDownload?: () => void;
   onMoveToTrash?: () => void;
 };
@@ -16,7 +18,9 @@ type Props = {
 export const FileCard = ({
   name,
   href,
+  isStarred,
   onRename,
+  onStar,
   onDownload,
   onMoveToTrash,
 }: Props) => {
@@ -29,6 +33,14 @@ export const FileCard = ({
       onClick: (e?: any) => {
         e?.stopPropagation();
         onRename?.();
+      },
+    },
+    {
+      label: isStarred ? "Unstar" : "Star",
+      icon: <Star className="h-4 w-4" />,
+      onClick: (e?: any) => {
+        e?.stopPropagation();
+        onStar?.();
       },
     },
     {
@@ -54,7 +66,7 @@ export const FileCard = ({
   return (
     <Link href={href} target="_blank">
       <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-blue-400 transition-all cursor-pointer">
-        
+
         {/* LEFT SIDE */}
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
@@ -67,9 +79,7 @@ export const FileCard = ({
         </div>
 
         {/* RIGHT SIDE MENU */}
-        <div
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div onClick={(e) => e.stopPropagation()}>
           <DriveMenu items={menuItems} />
         </div>
       </div>

@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Folder, Pencil, Download, Trash } from "lucide-react";
+import { Folder, Pencil, Download, Trash, Star } from "lucide-react";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 
 type Props = {
   name: string;
   href: string;
+  isStarred?: boolean;
   onRename?: () => void;
+  onStar?: () => void;
   onDownload?: () => void;
   onMoveToTrash?: () => void;
 };
@@ -15,7 +17,9 @@ type Props = {
 export const FolderCard = ({
   name,
   href,
+  isStarred,
   onRename,
+  onStar,
   onDownload,
   onMoveToTrash,
 }: Props) => {
@@ -26,6 +30,14 @@ export const FolderCard = ({
       onClick: (e?: any) => {
         e?.stopPropagation();
         onRename?.();
+      },
+    },
+    {
+      label: isStarred ? "Unstar" : "Star",
+      icon: <Star className="h-4 w-4" />,
+      onClick: (e?: any) => {
+        e?.stopPropagation();
+        onStar?.();
       },
     },
     {
@@ -51,7 +63,7 @@ export const FolderCard = ({
   return (
     <Link href={href}>
       <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-yellow-400 transition-all cursor-pointer">
-        
+
         {/* LEFT SIDE */}
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="p-2 bg-yellow-100 text-yellow-600 rounded-lg">
@@ -64,9 +76,7 @@ export const FolderCard = ({
         </div>
 
         {/* RIGHT SIDE MENU */}
-        <div
-          onClick={(e) => e.stopPropagation()} // prevent link click
-        >
+        <div onClick={(e) => e.stopPropagation()}>
           <DriveMenu items={menuItems} />
         </div>
       </div>

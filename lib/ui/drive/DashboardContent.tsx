@@ -62,6 +62,26 @@ export const DashboardContent = () => {
     setRenameTarget(null);
   };
 
+  const handleStar = async (id: string, type: "file" | "folder", isStarred: boolean) => {
+    const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
+
+    await fetch(endpoint, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isStarred }),
+    });
+
+    if (type === "file") {
+      setFiles((prev: any[]) =>
+        prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
+      );
+    } else {
+      setFolders((prev: any[]) =>
+        prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
+      );
+    }
+  };
+
   const handleMoveToTrash = async (id: string, type: "file" | "folder") => {
     const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
 
@@ -101,7 +121,9 @@ export const DashboardContent = () => {
               key={folder._id}
               name={folder.name}
               href={`/dashboard?folderId=${folder._id}`}
+              isStarred={folder.isStarred}
               onRename={() => openRename(folder._id, folder.name, "folder")}
+              onStar={() => handleStar(folder._id, "folder", !folder.isStarred)}
               onMoveToTrash={() => handleMoveToTrash(folder._id, "folder")}
             />
           ))}
@@ -121,7 +143,9 @@ export const DashboardContent = () => {
               key={file._id}
               name={file.name}
               href={file.url}
+              isStarred={file.isStarred}
               onRename={() => openRename(file._id, file.name, "file")}
+              onStar={() => handleStar(file._id, "file", !file.isStarred)}
               onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
             />
           ))}

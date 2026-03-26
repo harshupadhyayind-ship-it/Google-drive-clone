@@ -2,6 +2,30 @@ import { connectDB } from "@/lib/db/connect";
 import { Folder } from "@/lib/db/models/Folder";
 import { File } from "@/lib/db/models/File";
 
+export async function getStarredData(userId: string) {
+  await connectDB();
+
+  const folders = await Folder.find({ userId, isStarred: true, isTrashed: false }).sort({ updatedAt: -1 });
+  const files = await File.find({ userId, isStarred: true, isTrashed: false }).sort({ updatedAt: -1 });
+
+  return {
+    folders: JSON.parse(JSON.stringify(folders)),
+    files: JSON.parse(JSON.stringify(files)),
+  };
+}
+
+export async function getTrashData(userId: string) {
+  await connectDB();
+
+  const folders = await Folder.find({ userId, isTrashed: true }).sort({ trashedAt: -1 });
+  const files = await File.find({ userId, isTrashed: true }).sort({ trashedAt: -1 });
+
+  return {
+    folders: JSON.parse(JSON.stringify(folders)),
+    files: JSON.parse(JSON.stringify(files)),
+  };
+}
+
 export async function getDriveData(userId: string, parentId: string | null) {
   await connectDB();
 
