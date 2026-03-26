@@ -20,16 +20,37 @@ const FolderSchema = new mongoose.Schema(
       default: null,
     },
 
-    isStarred: { type: Boolean, default: false },
-    isTrashed: { type: Boolean, default: false },
-    trashedAt: { type: Date, default: null },
-    lastAccessedAt: { type: Date, default: null },
+    // Starred
+    isStarred: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Trash
+    isTrashed: {
+      type: Boolean,
+      default: false,
+    },
+
+    trashedAt: {
+      type: Date,
+      default: null,
+    },
+
+    // Recent
+    lastAccessedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
 
-// 🔥 Important for faster queries
+// Indexes
 FolderSchema.index({ userId: 1, parentId: 1 });
+FolderSchema.index({ userId: 1, isTrashed: 1 });
+FolderSchema.index({ userId: 1, isStarred: 1 });
+FolderSchema.index({ userId: 1, lastAccessedAt: -1 });
 
 delete (mongoose.models as any).Folder;
 export const Folder = mongoose.model("Folder", FolderSchema);

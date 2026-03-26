@@ -18,13 +18,36 @@ const FileSchema = new mongoose.Schema(
       default: null,
     },
 
-    isStarred: { type: Boolean, default: false },
-    isTrashed: { type: Boolean, default: false },
-    trashedAt: { type: Date, default: null },
-    lastAccessedAt: { type: Date, default: null },
+    // Starred
+    isStarred: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Trash (soft delete)
+    isTrashed: {
+      type: Boolean,
+      default: false,
+    },
+
+    trashedAt: {
+      type: Date,
+      default: null,
+    },
+
+    // Recent (last accessed/opened)
+    lastAccessedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
 
-delete (mongoose.models as any).File;
-export const File = mongoose.model("File", FileSchema);
+// Index for performance
+FileSchema.index({ userId: 1, isTrashed: 1 });
+FileSchema.index({ userId: 1, isStarred: 1 });
+FileSchema.index({ userId: 1, lastAccessedAt: -1 });
+
+export const File =
+  mongoose.models.File || mongoose.model("File", FileSchema);
