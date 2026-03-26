@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { Folder, FileText, Star, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/lib/ui/components/Button";
 import { useToast } from "@/lib/context/ToastContext";
 import { useInfiniteScroll } from "@/lib/hooks/useInfiniteScroll";
@@ -11,6 +12,7 @@ type Item = {
   _id: string;
   name: string;
   type: "file" | "folder";
+  url?: string; // files only
 };
 
 type Props = {
@@ -24,7 +26,7 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
 
   const initialItems: Item[] = [
     ...initialFolders.map((f) => ({ _id: f._id, name: f.name, type: "folder" as const })),
-    ...initialFiles.map((f) => ({ _id: f._id, name: f.name, type: "file" as const })),
+    ...initialFiles.map((f) => ({ _id: f._id, name: f.name, type: "file" as const, url: f.url })),
   ];
 
   const fetchFn = useCallback(async (page: number) => {
@@ -33,7 +35,7 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
     const data = await res.json();
     const items: Item[] = [
       ...(data.folders ?? []).map((f: any) => ({ _id: f._id, name: f.name, type: "folder" as const })),
-      ...(data.files ?? []).map((f: any) => ({ _id: f._id, name: f.name, type: "file" as const })),
+      ...(data.files ?? []).map((f: any) => ({ _id: f._id, name: f.name, type: "file" as const, url: f.url })),
     ];
     return { items, hasMore: data.hasMore };
   }, [user?.id]);
@@ -67,29 +69,41 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
         <p className="text-sm text-gray-400">No starred items</p>
       ) : (
         <div className="flex flex-col gap-2">
-          {items.map((item, i) => (
-            <div
-              key={item._id ?? i}
-              className="flex items-center justify-between p-3 border rounded-xl bg-white"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
-                  {item.type === "folder" ? <Folder size={18} /> : <FileText size={18} />}
-                </div>
-                <p className="text-sm font-medium text-gray-800">{item.name}</p>
-              </div>
+          {items.map((item, i) => {
+            const href = item.type === "folder"
+              ? `/?folderId=${item._id}`
+              : item.url ?? "#";
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-yellow-500 hover:text-yellow-600"
-                onClick={() => handleUnstar(item._id, item.type)}
+            return (
+              <div
+                key={item._id ?? i}
+                className="flex items-center justify-between p-3 border rounded-xl bg-white hover:shadow-sm transition-shadow"
               >
-                <Star size={15} className="mr-1 fill-yellow-400" />
-                Unstar
-              </Button>
-            </div>
-          ))}
+                {/* Clickable area */}
+                <Link
+                  href={href}
+                  target={item.type === "file" ? "_blank" : undefined}
+                  rel={item.type === "file" ? "noopener noreferrer" : undefined}
+                  className="flex items-center gap-3 min-w-0 flex-1"
+                >
+                  <div className={`p-2 rounded-lg shrink-0 ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
+                    {item.type === "folder" ? <Folder size={18} /> : <FileText size={18} />}
+                  </div>
+                  <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
+                </Link>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-yellow-500 hover:text-yellow-600 shrink-0 ml-2"
+                  onClick={() => handleUnstar(item._id, item.type)}
+                >
+                  <Star size={15} className="mr-1 fill-yellow-400" />
+                  Unstar
+                </Button>
+              </div>
+            );
+          })}
 
           {/* Infinite scroll sentinel */}
           <div ref={sentinelRef} className="py-2 flex justify-center">
