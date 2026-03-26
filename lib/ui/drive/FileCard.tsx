@@ -3,7 +3,7 @@
 import { getFileIcon } from "@/lib/utils/fileIcon";
 import Link from "next/link";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
-import { Pencil, Download, Trash, Star } from "lucide-react";
+import { Pencil, Download, Trash, Star, Share2 } from "lucide-react";
 
 type Props = {
   id: string;
@@ -12,6 +12,7 @@ type Props = {
   isStarred?: boolean;
   onRename?: () => void;
   onStar?: () => void;
+  onShare?: () => void;
   onDownload?: () => void;
   onMoveToTrash?: () => void;
 };
@@ -23,6 +24,7 @@ export const FileCard = ({
   isStarred,
   onRename,
   onStar,
+  onShare,
   onDownload,
   onMoveToTrash,
 }: Props) => {
@@ -32,36 +34,29 @@ export const FileCard = ({
     {
       label: "Rename",
       icon: <Pencil className="h-4 w-4" />,
-      onClick: (e?: any) => {
-        e?.stopPropagation();
-        onRename?.();
-      },
+      onClick: (e?: any) => { e?.stopPropagation(); onRename?.(); },
     },
     {
       label: isStarred ? "Unstar" : "Star",
       icon: <Star className="h-4 w-4" />,
-      onClick: (e?: any) => {
-        e?.stopPropagation();
-        onStar?.();
-      },
+      onClick: (e?: any) => { e?.stopPropagation(); onStar?.(); },
+    },
+    {
+      label: "Share",
+      icon: <Share2 className="h-4 w-4" />,
+      onClick: (e?: any) => { e?.stopPropagation(); onShare?.(); },
     },
     {
       label: "Download",
       icon: <Download className="h-4 w-4" />,
-      onClick: (e?: any) => {
-        e?.stopPropagation();
-        onDownload?.();
-      },
+      onClick: (e?: any) => { e?.stopPropagation(); onDownload?.(); },
     },
     { separator: true },
     {
       label: "Move to Trash",
       icon: <Trash className="h-4 w-4" />,
       variant: "destructive",
-      onClick: (e?: any) => {
-        e?.stopPropagation();
-        onMoveToTrash?.();
-      },
+      onClick: (e?: any) => { e?.stopPropagation(); onMoveToTrash?.(); },
     },
   ];
 

@@ -11,6 +11,7 @@ import {
   FolderPlus,
   Plus,
   X,
+  Users,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "../components/Button";
@@ -28,6 +29,7 @@ import { InputDialog } from "@/lib/ui/components/InputDialog";
 
 const menuItems = [
   { name: "My Drive", path: "/dashboard", icon: HardDrive },
+  { name: "Shared with me", path: "/dashboard/shared-with-me", icon: Users },
   { name: "Recent", path: "/dashboard/recent", icon: Clock },
   { name: "Starred", path: "/dashboard/starred", icon: Star },
   { name: "Trash", path: "/dashboard/trash", icon: Trash2 },

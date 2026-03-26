@@ -8,12 +8,10 @@ import { FileCard } from "./FileCard";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { InputDialog } from "@/lib/ui/components/InputDialog";
+import { ShareDialog } from "./ShareDialog";
 
-type RenameTarget = {
-  id: string;
-  name: string;
-  type: "file" | "folder";
-};
+type RenameTarget = { id: string; name: string; type: "file" | "folder" };
+type ShareTarget = { id: string; name: string; type: "file" | "folder" };
 
 export const DashboardContent = () => {
   const searchParams = useSearchParams();
@@ -25,6 +23,7 @@ export const DashboardContent = () => {
   const toast = useToast();
   const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
   const [renameName, setRenameName] = useState("");
+  const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null);
 
   useEffect(() => {
     if (parentId === currentFolderId) return;
@@ -139,6 +138,7 @@ export const DashboardContent = () => {
               isStarred={folder.isStarred}
               onRename={() => openRename(folder._id, folder.name, "folder")}
               onStar={() => handleStar(folder._id, "folder", !folder.isStarred)}
+              onShare={() => setShareTarget({ id: folder._id, name: folder.name, type: "folder" })}
               onMoveToTrash={() => handleMoveToTrash(folder._id, "folder")}
             />
           ))}
@@ -162,6 +162,7 @@ export const DashboardContent = () => {
               isStarred={file.isStarred}
               onRename={() => openRename(file._id, file.name, "file")}
               onStar={() => handleStar(file._id, "file", !file.isStarred)}
+              onShare={() => setShareTarget({ id: file._id, name: file.name, type: "file" })}
               onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
             />
           ))}
@@ -177,6 +178,16 @@ export const DashboardContent = () => {
         onConfirm={handleRename}
         confirmLabel="Rename"
       />
+
+      {shareTarget && (
+        <ShareDialog
+          open={!!shareTarget}
+          onOpenChange={(open) => !open && setShareTarget(null)}
+          itemId={shareTarget.id}
+          itemType={shareTarget.type}
+          itemName={shareTarget.name}
+        />
+      )}
     </div>
   );
 };
