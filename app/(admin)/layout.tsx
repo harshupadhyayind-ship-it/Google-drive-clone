@@ -1,6 +1,5 @@
 // app/(admin)/layout.tsx
-import { AdminSidebar } from "@/lib/ui/layout/AdminSidebar";
-import { Navbar } from "@/lib/ui/layout/Navbar";
+import { AdminLayoutClient } from "@/lib/ui/layout/AdminLayoutClient";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
@@ -13,16 +12,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   if (session.user.role !== "admin") {
-    redirect("/dashboard");
+    redirect("/");
   }
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <AdminSidebar />
 
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
-  );
+  return <AdminLayoutClient>{children}</AdminLayoutClient>;
 }

@@ -99,51 +99,53 @@ export const Navbar = ({ onMenuClick }: Props) => {
         <Menu size={20} />
       </Button>
 
-      {/* Search */}
-      <div ref={wrapperRef} className="relative flex-1 max-w-md">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10" />
-        <Input
-          placeholder="Search files..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSearch();
-            if (e.key === "Escape") setShowSuggestions(false);
-          }}
-          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-          className="pl-9 w-full"
-        />
+      {/* Search — hidden for admin */}
+      {user?.role !== "admin" && (
+        <div ref={wrapperRef} className="relative flex-1 max-w-md">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10" />
+          <Input
+            placeholder="Search files..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+              if (e.key === "Escape") setShowSuggestions(false);
+            }}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            className="pl-9 w-full"
+          />
 
-        {/* Suggestions dropdown */}
-        {showSuggestions && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-xl shadow-lg z-50 overflow-hidden">
-            {suggestions.map((item) => (
+          {/* Suggestions dropdown */}
+          {showSuggestions && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-xl shadow-lg z-50 overflow-hidden">
+              {suggestions.map((item) => (
+                <button
+                  key={item._id}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 text-left"
+                  onMouseDown={() => handleSelect(item)}
+                >
+                  <span className={`p-1 rounded ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
+                    {item.type === "folder" ? <Folder size={14} /> : <FileText size={14} />}
+                  </span>
+                  <span className="truncate text-gray-800">{item.name}</span>
+                  <span className="ml-auto text-xs text-gray-400 shrink-0">{item.type}</span>
+                </button>
+              ))}
+
               <button
-                key={item._id}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 text-left"
-                onMouseDown={() => handleSelect(item)}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t"
+                onMouseDown={handleSearch}
               >
-                <span className={`p-1 rounded ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
-                  {item.type === "folder" ? <Folder size={14} /> : <FileText size={14} />}
-                </span>
-                <span className="truncate text-gray-800">{item.name}</span>
-                <span className="ml-auto text-xs text-gray-400 shrink-0">{item.type}</span>
+                <Search size={14} />
+                Search for &ldquo;{search}&rdquo;
               </button>
-            ))}
-
-            <button
-              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t"
-              onMouseDown={handleSearch}
-            >
-              <Search size={14} />
-              Search for &ldquo;{search}&rdquo;
-            </button>
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Right Section */}
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2 shrink-0 ml-auto">
         <Button variant="ghost" size="icon">
           <Bell size={18} />
         </Button>
