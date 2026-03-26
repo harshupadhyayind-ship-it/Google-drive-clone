@@ -26,6 +26,5 @@ const FileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const File =
-  (mongoose.models.File as mongoose.Model<any>) ||
-  mongoose.model("File", FileSchema);
+delete (mongoose.models as any).File;
+export const File = mongoose.model("File", FileSchema);

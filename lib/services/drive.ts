@@ -61,11 +61,13 @@ export async function getDriveData(userId: string, parentId: string | null) {
   const folders = await Folder.find({
     userId,
     parentId,
+    isTrashed: { $ne: true },
   }).sort({ createdAt: -1 });
 
   const files = await File.find({
     userId,
     folderId: parentId,
+    isTrashed: { $ne: true },
   }).sort({ createdAt: -1 });
 
   return {

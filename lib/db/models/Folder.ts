@@ -31,6 +31,5 @@ const FolderSchema = new mongoose.Schema(
 // 🔥 Important for faster queries
 FolderSchema.index({ userId: 1, parentId: 1 });
 
-export const Folder =
-  (mongoose.models.Folder as mongoose.Model<any>) ||
-  mongoose.model("Folder", FolderSchema);
+delete (mongoose.models as any).Folder;
+export const Folder = mongoose.model("Folder", FolderSchema);
