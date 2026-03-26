@@ -39,6 +39,7 @@ export async function POST(req: Request) {
       size: file.size,
       userId,
       folderId: folderId || null,
+      lastAccessedAt: new Date(),
     });
 
     return NextResponse.json(savedFile);

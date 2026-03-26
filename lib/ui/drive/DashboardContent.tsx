@@ -116,9 +116,9 @@ export const DashboardContent = () => {
             <p className="text-sm text-gray-400">No folders</p>
           )}
 
-          {folders.map((folder: any) => (
+          {folders.map((folder: any, i: number) => (
             <FolderCard
-              key={folder._id}
+              key={folder._id ?? i}
               name={folder.name}
               href={`/dashboard?folderId=${folder._id}`}
               isStarred={folder.isStarred}
@@ -138,9 +138,9 @@ export const DashboardContent = () => {
             <p className="text-sm text-gray-400">No files</p>
           )}
 
-          {files.map((file: any) => (
+          {files.map((file: any, i: number) => (
             <FileCard
-              key={file._id}
+              key={file._id ?? i}
               id={file._id}
               name={file.name}
               href={file.url}

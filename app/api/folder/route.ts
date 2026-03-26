@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     name,
     userId,
     parentId: parentId || null,
+    lastAccessedAt: new Date(),
   });
 
   return NextResponse.json(folder);

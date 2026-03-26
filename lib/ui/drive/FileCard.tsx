@@ -74,7 +74,7 @@ export const FileCard = ({
   };
 
   return (
-    <Link href={href} target="_blank" onClick={handleClick}>
+    <Link href={href || "#"} target="_blank" onClick={handleClick}>
       <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-blue-400 transition-all cursor-pointer">
 
         {/* LEFT SIDE */}
