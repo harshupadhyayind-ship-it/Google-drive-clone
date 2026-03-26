@@ -2,10 +2,12 @@ import { connectDB } from "@/lib/db/connect";
 import { Share } from "@/lib/db/models/Share";
 import { File } from "@/lib/db/models/File";
 import { Folder } from "@/lib/db/models/Folder";
+import { Notification } from "@/lib/db/models/Notification";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { randomBytes } from "crypto";
+import { pushToUser } from "@/lib/sse";
 
 // Create share (public link or user share)
 export async function POST(req: Request) {
@@ -61,6 +63,22 @@ export async function POST(req: Request) {
       itemId, itemType, itemName, url,
       ownerId: session.user.id, shareType: "user", sharedWithUserId,
     });
+
+    // Create a persistent notification for the recipient
+    const senderName = session.user.name ?? "Someone";
+    const notification = await Notification.create({
+      userId:       sharedWithUserId,
+      fromUserId:   session.user.id,
+      fromUserName: senderName,
+      type:         "share",
+      message:      `${senderName} shared "${itemName}" with you`,
+      itemName,
+      itemType,
+    });
+
+    // Push real-time SSE event if the recipient is online
+    pushToUser(sharedWithUserId, "notification", JSON.parse(JSON.stringify(notification)));
+
     return NextResponse.json(JSON.parse(JSON.stringify(share)));
   }
 
