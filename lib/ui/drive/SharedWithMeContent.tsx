@@ -45,7 +45,7 @@ export const SharedWithMeContent = () => {
         <div className="flex flex-col gap-2">
           {items.map((item) => {
             const href = item.itemType === "folder"
-              ? `/?folderId=${item.itemId}`   // use the real folder id, not the share doc id
+              ? `/shared-folder/${item.itemId}`
               : item.url ?? "#";
 
             return (

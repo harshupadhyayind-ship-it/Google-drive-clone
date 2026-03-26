@@ -3,12 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Bell, FileText, Folder, X } from "lucide-react";
 import { Button } from "@/lib/ui/components/Button";
+import Link from "next/link";
 
 type NotificationItem = {
   _id: string;
   message: string;
   itemType?: string;
   fromUserName?: string;
+  link?: string;
   read: boolean;
   createdAt: string;
 };
@@ -142,40 +144,48 @@ export const NotificationBell = () => {
             )}
 
             {!loading &&
-              items.map((n) => (
-                <div
-                  key={n._id}
-                  className={`flex items-start gap-3 px-4 py-3 border-b last:border-0 transition-colors ${
-                    n.read ? "bg-white" : "bg-blue-50"
-                  }`}
-                >
-                  {/* Icon */}
-                  <div
-                    className={`p-2 rounded-lg shrink-0 mt-0.5 ${
-                      n.itemType === "folder"
-                        ? "bg-yellow-100 text-yellow-600"
-                        : "bg-blue-100 text-blue-600"
+              items.map((n) => {
+                const href = n.link ?? "/dashboard/shared-with-me";
+                const isExternal = href.startsWith("http");
+                return (
+                  <Link
+                    key={n._id}
+                    href={href}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    onClick={() => setOpen(false)}
+                    className={`flex items-start gap-3 px-4 py-3 border-b last:border-0 transition-colors cursor-pointer hover:bg-gray-50 ${
+                      n.read ? "bg-white" : "bg-blue-50"
                     }`}
                   >
-                    {n.itemType === "folder" ? (
-                      <Folder size={14} />
-                    ) : (
-                      <FileText size={14} />
+                    {/* Icon */}
+                    <div
+                      className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                        n.itemType === "folder"
+                          ? "bg-yellow-100 text-yellow-600"
+                          : "bg-blue-100 text-blue-600"
+                      }`}
+                    >
+                      {n.itemType === "folder" ? (
+                        <Folder size={14} />
+                      ) : (
+                        <FileText size={14} />
+                      )}
+                    </div>
+
+                    {/* Text */}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-gray-800 leading-snug">{n.message}</p>
+                      <p className="text-xs text-gray-400 mt-1">{timeAgo(n.createdAt)}</p>
+                    </div>
+
+                    {/* Unread dot */}
+                    {!n.read && (
+                      <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1.5" />
                     )}
-                  </div>
-
-                  {/* Text */}
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm text-gray-800 leading-snug">{n.message}</p>
-                    <p className="text-xs text-gray-400 mt-1">{timeAgo(n.createdAt)}</p>
-                  </div>
-
-                  {/* Unread dot */}
-                  {!n.read && (
-                    <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1.5" />
-                  )}
-                </div>
-              ))}
+                  </Link>
+                );
+              })}
           </div>
         </div>
       )}

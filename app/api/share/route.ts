@@ -66,6 +66,9 @@ export async function POST(req: Request) {
 
     // Create a persistent notification for the recipient
     const senderName = session.user.name ?? "Someone";
+    const link = itemType === "file" && url
+      ? url
+      : `/shared-folder/${itemId}`;
     const notification = await Notification.create({
       userId:       sharedWithUserId,
       fromUserId:   session.user.id,
@@ -74,6 +77,8 @@ export async function POST(req: Request) {
       message:      `${senderName} shared "${itemName}" with you`,
       itemName,
       itemType,
+      itemId,
+      link,
     });
 
     // Push real-time SSE event if the recipient is online
