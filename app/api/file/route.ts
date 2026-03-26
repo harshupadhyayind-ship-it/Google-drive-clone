@@ -1,41 +1,41 @@
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
-
 import { connectDB } from "@/lib/db/connect";
 import { File } from "@/lib/db/models/File";
+import { uploadToS3 } from "@/lib/s3";
 
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
 
-    const file = formData.get("file") as File;
+    const file = formData.get("file") as globalThis.File;
     const userId = formData.get("userId") as string;
     const folderId = formData.get("folderId") as string;
 
     if (!file || !userId) {
+      return NextResponse.json({ error: "Missing file or userId" }, { status: 400 });
+    }
+
+    const MAX_SIZE = 100 * 1024 * 1024; // 100 MB
+    if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: "Missing file or userId" },
-        { status: 400 }
+        { error: "File too large. Maximum size is 100 MB" },
+        { status: 413 }
       );
     }
 
-    // Convert file
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const fileName = `${Date.now()}-${file.name}`;
+    // Unique key: uploads/<userId>/<timestamp>-<filename>
+    const key = `uploads/${userId}/${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
 
-    const filePath = path.join(process.cwd(), "public/uploads", fileName);
-
-    // Save file locally
-    await writeFile(filePath, buffer);
+    const url = await uploadToS3(buffer, key, file.type || "application/octet-stream");
 
     await connectDB();
 
     const savedFile = await File.create({
       name: file.name,
-      url: `/uploads/${fileName}`,
+      url,
       size: file.size,
       userId,
       folderId: folderId || null,
@@ -45,9 +45,6 @@ export async function POST(req: Request) {
     return NextResponse.json(savedFile);
   } catch (error) {
     console.error("UPLOAD ERROR:", error);
-    return NextResponse.json(
-      { error: "Upload failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

@@ -13,7 +13,7 @@ import {
   X,
   Users,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { useDrive } from "@/lib/context/DriveContext";
 import { useSearchParams } from "next/navigation";
@@ -52,6 +52,16 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
 
   const [open, setOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
+  const [storage, setStorage] = useState({ usedMB: 0, totalMB: 100, percent: 0 });
+
+  useEffect(() => {
+    fetch("/api/storage")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.usedMB !== undefined) setStorage(d);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -164,11 +174,25 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
 
         {/* Storage */}
         <div className="mt-auto pt-6">
-          <p className="text-xs text-gray-500 mb-1">Storage</p>
-          <div className="w-full bg-gray-200 h-2 rounded">
-            <div className="bg-blue-500 h-2 rounded w-1/3" />
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-xs text-gray-500">Storage</p>
+            <p className="text-xs text-gray-500">{storage.percent}%</p>
           </div>
-          <p className="text-xs mt-1 text-gray-600">5GB of 15GB used</p>
+          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+            <div
+              className={`h-2 rounded-full transition-all ${
+                storage.percent >= 90
+                  ? "bg-red-500"
+                  : storage.percent >= 70
+                  ? "bg-yellow-500"
+                  : "bg-blue-500"
+              }`}
+              style={{ width: `${storage.percent}%` }}
+            />
+          </div>
+          <p className="text-xs mt-1 text-gray-600">
+            {storage.usedMB} MB of {storage.totalMB} MB used
+          </p>
         </div>
 
         <InputDialog
