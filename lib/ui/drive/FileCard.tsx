@@ -6,6 +6,7 @@ import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 import { Pencil, Download, Trash, Star } from "lucide-react";
 
 type Props = {
+  id: string;
   name: string;
   href: string;
   isStarred?: boolean;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export const FileCard = ({
+  id,
   name,
   href,
   isStarred,
@@ -63,8 +65,16 @@ export const FileCard = ({
     },
   ];
 
+  const handleClick = () => {
+    fetch(`/api/file/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lastAccessedAt: new Date().toISOString() }),
+    });
+  };
+
   return (
-    <Link href={href} target="_blank">
+    <Link href={href} target="_blank" onClick={handleClick}>
       <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-blue-400 transition-all cursor-pointer">
 
         {/* LEFT SIDE */}

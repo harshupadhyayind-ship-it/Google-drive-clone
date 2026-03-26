@@ -14,6 +14,35 @@ export async function getStarredData(userId: string) {
   };
 }
 
+export async function getRecentData(userId: string) {
+  await connectDB();
+
+  const folders = await Folder.find({
+    userId,
+    isTrashed: false,
+    lastAccessedAt: { $ne: null },
+  })
+    .sort({ lastAccessedAt: -1 })
+    .limit(20);
+
+  const files = await File.find({
+    userId,
+    isTrashed: false,
+    lastAccessedAt: { $ne: null },
+  })
+    .sort({ lastAccessedAt: -1 })
+    .limit(20);
+
+  // Merge and sort by lastAccessedAt, keep top 20
+  const all = [
+    ...JSON.parse(JSON.stringify(folders)).map((f: any) => ({ ...f, type: "folder" })),
+    ...JSON.parse(JSON.stringify(files)).map((f: any) => ({ ...f, type: "file" })),
+  ].sort((a, b) => new Date(b.lastAccessedAt).getTime() - new Date(a.lastAccessedAt).getTime())
+    .slice(0, 20);
+
+  return { items: all };
+}
+
 export async function getTrashData(userId: string) {
   await connectDB();
 

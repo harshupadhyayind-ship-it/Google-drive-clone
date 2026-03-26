@@ -141,6 +141,7 @@ export const DashboardContent = () => {
           {files.map((file: any) => (
             <FileCard
               key={file._id}
+              id={file._id}
               name={file.name}
               href={file.url}
               isStarred={file.isStarred}
