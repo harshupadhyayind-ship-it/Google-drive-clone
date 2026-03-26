@@ -4,13 +4,37 @@ import { connectDB } from "@/lib/db/connect";
 import { File } from "@/lib/db/models/File";
 import { NextResponse } from "next/server";
 
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  await connectDB();
+  const body = await req.json();
+
+  const update: Record<string, any> = {};
+
+  if (body.name !== undefined) update.name = body.name;
+  if (body.isStarred !== undefined) update.isStarred = body.isStarred;
+  if (body.lastAccessedAt !== undefined) update.lastAccessedAt = body.lastAccessedAt;
+
+  if (body.isTrashed !== undefined) {
+    update.isTrashed = body.isTrashed;
+    update.trashedAt = body.isTrashed ? new Date() : null;
+  }
+
+  const file = await File.findByIdAndUpdate(id, update, { new: true });
+  return NextResponse.json(file);
+}
+
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   await connectDB();
 
-  await File.findByIdAndDelete(params.id);
+  await File.findByIdAndDelete(id);
 
   return NextResponse.json({ success: true });
 }

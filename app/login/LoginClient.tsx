@@ -40,10 +40,10 @@ export default function LoginClient() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-50">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-80 space-y-4 p-6 bg-white border rounded-xl shadow-sm"
+        className="w-full max-w-sm space-y-4 p-6 bg-white border rounded-xl shadow-sm"
       >
         <h1 className="text-xl font-semibold text-center">Login</h1>
 

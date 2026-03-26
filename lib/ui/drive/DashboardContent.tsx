@@ -2,24 +2,115 @@
 "use client";
 
 import { useDrive } from "@/lib/context/DriveContext";
+import { useToast } from "@/lib/context/ToastContext";
 import { FolderCard } from "./FolderCard";
 import { FileCard } from "./FileCard";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { InputDialog } from "@/lib/ui/components/InputDialog";
+import { ShareDialog } from "./ShareDialog";
+
+type RenameTarget = { id: string; name: string; type: "file" | "folder" };
+type ShareTarget = { id: string; name: string; type: "file" | "folder" };
 
 export const DashboardContent = () => {
   const searchParams = useSearchParams();
-  const { folders, files, refreshDriveData, currentFolderId, isSyncing } =
+  const { folders, files, setFolders, setFiles, refreshDriveData, currentFolderId, isSyncing } =
     useDrive();
 
   const parentId = searchParams.get("folderId") ?? null;
 
-  // When `?folderId=...` changes, refetch folder contents from the API.
-  // This prevents stale state when Next doesn't remount server layouts.
+  const toast = useToast();
+  const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
+  const [renameName, setRenameName] = useState("");
+  const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null);
+
   useEffect(() => {
     if (parentId === currentFolderId) return;
     refreshDriveData(parentId);
   }, [parentId, currentFolderId, refreshDriveData]);
+
+  const openRename = (id: string, name: string, type: "file" | "folder") => {
+    setRenameTarget({ id, name, type });
+    setRenameName(name);
+  };
+
+  const handleRename = async () => {
+    if (!renameTarget || !renameName.trim()) return;
+
+    const { id, type } = renameTarget;
+    const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: renameName.trim() }),
+      });
+      if (!res.ok) throw new Error();
+      const updated = await res.json();
+      if (type === "file") {
+        setFiles((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, name: updated?.name } : f))
+        );
+      } else {
+        setFolders((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, name: updated?.name } : f))
+        );
+      }
+      toast.success("Renamed successfully");
+    } catch {
+      toast.error("Failed to rename");
+    }
+
+    setRenameTarget(null);
+  };
+
+  const handleStar = async (id: string, type: "file" | "folder", isStarred: boolean) => {
+    const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isStarred }),
+      });
+      if (!res.ok) throw new Error();
+      if (type === "file") {
+        setFiles((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
+        );
+      } else {
+        setFolders((prev: any[]) =>
+          prev.map((f) => (f._id === id ? { ...f, isStarred } : f))
+        );
+      }
+      toast.success(isStarred ? "Added to starred" : "Removed from starred");
+    } catch {
+      toast.error("Failed to update starred");
+    }
+  };
+
+  const handleMoveToTrash = async (id: string, type: "file" | "folder") => {
+    const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isTrashed: true }),
+      });
+      if (!res.ok) throw new Error();
+      if (type === "file") {
+        setFiles((prev: any[]) => prev.filter((f) => f._id !== id));
+      } else {
+        setFolders((prev: any[]) => prev.filter((f) => f._id !== id));
+      }
+      toast.success("Moved to trash");
+    } catch {
+      toast.error("Failed to move to trash");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -32,44 +123,71 @@ export const DashboardContent = () => {
       )}
 
       <section>
-        <h2 className="mb-3 text-sm font-medium text-gray-600">
-          Folders
-        </h2>
+        <h2 className="mb-3 text-sm font-medium text-gray-600">Folders</h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {folders.length === 0 && (
             <p className="text-sm text-gray-400">No folders</p>
           )}
 
-          {folders.map((folder: any) => (
+          {folders.map((folder: any, i: number) => (
             <FolderCard
-              key={folder._id}
+              key={folder._id ?? i}
               name={folder.name}
               href={`/dashboard?folderId=${folder._id}`}
+              isStarred={folder.isStarred}
+              onRename={() => openRename(folder._id, folder.name, "folder")}
+              onStar={() => handleStar(folder._id, "folder", !folder.isStarred)}
+              onShare={() => setShareTarget({ id: folder._id, name: folder.name, type: "folder" })}
+              onMoveToTrash={() => handleMoveToTrash(folder._id, "folder")}
             />
           ))}
         </div>
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-medium text-gray-600">
-          Files
-        </h2>
+        <h2 className="mb-3 text-sm font-medium text-gray-600">Files</h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {files.length === 0 && (
             <p className="text-sm text-gray-400">No files</p>
           )}
 
-          {files.map((file: any) => (
+          {files.map((file: any, i: number) => (
             <FileCard
-              key={file._id}
+              key={file._id ?? i}
+              id={file._id}
               name={file.name}
               href={file.url}
+              isStarred={file.isStarred}
+              onRename={() => openRename(file._id, file.name, "file")}
+              onStar={() => handleStar(file._id, "file", !file.isStarred)}
+              onShare={() => setShareTarget({ id: file._id, name: file.name, type: "file" })}
+              onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
             />
           ))}
         </div>
       </section>
+
+      <InputDialog
+        open={!!renameTarget}
+        onOpenChange={(open) => !open && setRenameTarget(null)}
+        title={`Rename ${renameTarget?.type === "file" ? "File" : "Folder"}`}
+        value={renameName}
+        onChange={setRenameName}
+        onConfirm={handleRename}
+        confirmLabel="Rename"
+      />
+
+      {shareTarget && (
+        <ShareDialog
+          open={!!shareTarget}
+          onOpenChange={(open) => !open && setShareTarget(null)}
+          itemId={shareTarget.id}
+          itemType={shareTarget.type}
+          itemName={shareTarget.name}
+        />
+      )}
     </div>
   );
 };

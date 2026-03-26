@@ -72,6 +72,15 @@ export const DriveProvider = ({
         setFolders(Array.isArray(data?.folders) ? data.folders : []);
         setFiles(Array.isArray(data?.files) ? data.files : []);
         setCurrentFolderId(parentId ?? null);
+
+        // Update lastAccessedAt for the opened folder
+        if (parentId) {
+          fetch(`/api/folder/${parentId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lastAccessedAt: new Date().toISOString() }),
+          });
+        }
       } finally {
         setIsSyncing(false);
       }

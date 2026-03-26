@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 export const getFileIcon = (fileName: string) => {
-  const ext = fileName.split(".").pop()?.toLowerCase();
+  const ext = fileName?.split(".").pop()?.toLowerCase();
 
   switch (ext) {
     case "pdf":

@@ -52,5 +52,5 @@ FolderSchema.index({ userId: 1, isTrashed: 1 });
 FolderSchema.index({ userId: 1, isStarred: 1 });
 FolderSchema.index({ userId: 1, lastAccessedAt: -1 });
 
-export const Folder =
-  mongoose.models.Folder || mongoose.model("Folder", FolderSchema);
+delete (mongoose.models as any).Folder;
+export const Folder = mongoose.model("Folder", FolderSchema);
