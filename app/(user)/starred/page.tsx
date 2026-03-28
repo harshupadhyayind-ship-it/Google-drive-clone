@@ -1,4 +1,4 @@
-// app/(user)/dashboard/starred/page.tsx
+// app/(user)/starred/page.tsx
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

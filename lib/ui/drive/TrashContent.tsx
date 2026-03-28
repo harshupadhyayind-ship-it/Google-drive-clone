@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Folder, FileText, RotateCcw, Trash2, Loader2 } from "lucide-react";
+import { DriveBreadcrumb } from "./DriveBreadcrumb";
 import { Button } from "@/lib/ui/components/Button";
 import { useToast } from "@/lib/context/ToastContext";
 import { useInfiniteScroll } from "@/lib/hooks/useInfiniteScroll";
@@ -73,7 +74,7 @@ export const TrashContent = ({ initialFolders, initialFiles }: Props) => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Trash</h1>
+      <DriveBreadcrumb staticLabel="Trash" />
 
       {items.length === 0 && !loading ? (
         <p className="text-sm text-muted-foreground/60">Trash is empty</p>

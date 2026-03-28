@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "@/lib/context/ThemeContext";
@@ -32,6 +33,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
   const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
@@ -60,7 +62,13 @@ export const Navbar = ({ onMenuClick }: Props) => {
       ].slice(0, 6);
 
       setSuggestions(results);
-      setShowSuggestions(results.length > 0);
+      if (results.length > 0) {
+        const rect = wrapperRef.current?.getBoundingClientRect();
+        if (rect) setDropdownPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+        setShowSuggestions(true);
+      } else {
+        setShowSuggestions(false);
+      }
     }, 300);
 
     return () => {
@@ -83,7 +91,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
     setShowSuggestions(false);
     setSearch("");
     if (item.type === "folder") {
-      router.push(`/dashboard?folderId=${item._id}`);
+      router.push(`/?folderId=${item._id}`);
     } else {
       window.open(item.url, "_blank");
     }
@@ -92,7 +100,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
   const handleSearch = () => {
     if (!search.trim()) return;
     setShowSuggestions(false);
-    router.push(`/dashboard/search?q=${encodeURIComponent(search.trim())}`);
+    router.push(`/search?q=${encodeURIComponent(search.trim())}`);
   };
 
   return (
@@ -114,37 +122,47 @@ export const Navbar = ({ onMenuClick }: Props) => {
               if (e.key === "Enter") handleSearch();
               if (e.key === "Escape") setShowSuggestions(false);
             }}
-            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            onFocus={() => {
+              if (suggestions.length > 0) {
+                const rect = wrapperRef.current?.getBoundingClientRect();
+                if (rect) setDropdownPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+                setShowSuggestions(true);
+              }
+            }}
             className="pl-9 w-full"
           />
-
-          {/* Suggestions dropdown */}
-          {showSuggestions && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-[#13132a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
-              {suggestions.map((item) => (
-                <button
-                  key={item._id}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-muted text-left"
-                  onMouseDown={() => handleSelect(item)}
-                >
-                  <span className={`p-1 rounded ${item.type === "folder" ? "bg-yellow-500/20 text-yellow-400" : "bg-purple-500/20 text-purple-400"}`}>
-                    {item.type === "folder" ? <Folder size={14} /> : <File size={14} />}
-                  </span>
-                  <span className="truncate text-slate-200">{item.name}</span>
-                  <span className="ml-auto text-xs text-slate-500 shrink-0">{item.type}</span>
-                </button>
-              ))}
-
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-purple-400 hover:bg-purple-500/10 border-t border-white/10"
-                onMouseDown={handleSearch}
-              >
-                <Search size={14} />
-                Search for &ldquo;{search}&rdquo;
-              </button>
-            </div>
-          )}
         </div>
+      )}
+
+      {/* Suggestions — rendered in a portal so the header stacking context can't clip it */}
+      {mounted && showSuggestions && createPortal(
+        <div
+          style={{ top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width }}
+          className="fixed z-[9999] bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden"
+        >
+          {suggestions.map((item) => (
+            <button
+              key={item._id}
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-muted text-left transition-colors"
+              onMouseDown={() => handleSelect(item)}
+            >
+              <span className={`p-1 rounded shrink-0 ${item.type === "folder" ? "bg-yellow-500/20 text-yellow-400" : "bg-primary/20 text-primary"}`}>
+                {item.type === "folder" ? <Folder size={14} /> : <File size={14} />}
+              </span>
+              <span className="truncate text-foreground">{item.name}</span>
+              <span className="ml-auto text-xs text-muted-foreground shrink-0 capitalize">{item.type}</span>
+            </button>
+          ))}
+
+          <button
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-primary/10 border-t border-border transition-colors"
+            onMouseDown={handleSearch}
+          >
+            <Search size={14} />
+            Search for &ldquo;{search}&rdquo;
+          </button>
+        </div>,
+        document.body
       )}
 
       {/* Right Section */}

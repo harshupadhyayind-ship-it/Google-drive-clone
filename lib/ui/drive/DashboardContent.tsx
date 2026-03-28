@@ -12,6 +12,7 @@ import { ShareDialog } from "./ShareDialog";
 import { MoveDialog } from "./MoveDialog";
 import { Star, Trash2, X, SquareCheckBig } from "lucide-react";
 import { Button } from "@/lib/ui/components/Button";
+import { DriveBreadcrumb } from "./DriveBreadcrumb";
 
 type RenameTarget = { id: string; name: string; type: "file" | "folder" };
 type ShareTarget  = { id: string; name: string; type: "file" | "folder" };
@@ -236,7 +237,7 @@ export const DashboardContent = () => {
     <div className="space-y-6 pb-24">
       {/* Header row */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">My Drive</h1>
+        <DriveBreadcrumb folderId={parentId} />
 
         {selectionMode && (
           <button
@@ -265,7 +266,7 @@ export const DashboardContent = () => {
             <FolderCard
               key={folder._id ?? i}
               name={folder.name}
-              href={`/dashboard?folderId=${folder._id}`}
+              href={`/?folderId=${folder._id}`}
               isStarred={folder.isStarred}
               isSelected={isSelected(folder._id)}
               selectionMode={selectionMode}

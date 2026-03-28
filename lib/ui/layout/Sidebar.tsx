@@ -24,11 +24,11 @@ import {
 import { InputDialog } from "@/lib/ui/components/InputDialog";
 
 const navItems = [
-  { name: "My Drive",       path: "/dashboard",                icon: HardDrive },
-  { name: "Shared with me", path: "/dashboard/shared-with-me", icon: Users     },
-  { name: "Recent",         path: "/dashboard/recent",         icon: History   },
-  { name: "Starred",        path: "/dashboard/starred",        icon: Star      },
-  { name: "Trash",          path: "/dashboard/trash",          icon: Trash2    },
+  { name: "My Drive",       path: "/",               icon: HardDrive },
+  { name: "Shared with me", path: "/shared-with-me", icon: Users     },
+  { name: "Recent",         path: "/recent",          icon: History   },
+  { name: "Starred",        path: "/starred",         icon: Star      },
+  { name: "Trash",          path: "/trash",           icon: Trash2    },
 ];
 
 type Props = {
@@ -100,7 +100,7 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
       <aside className={asideClass}>
         {/* Logo + close */}
         <div className="flex items-center justify-between mb-6 px-2">
-          <Link href="/dashboard">
+          <Link href="/">
             <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
           </Link>
           <Button variant="ghost" size="icon" className="md:hidden" onClick={onClose}>

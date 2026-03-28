@@ -15,7 +15,7 @@ export const SharedFolderContent = ({ folderName, folders, files }: Props) => {
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link
-          href="/dashboard/shared-with-me"
+          href="/shared-with-me"
           className="p-2 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
         >
           <ArrowLeft size={18} />

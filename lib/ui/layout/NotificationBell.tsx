@@ -134,7 +134,7 @@ export const NotificationBell = () => {
         )}
 
         {!loading && items.map((n) => {
-          const href       = n.link ?? "/dashboard/shared-with-me";
+          const href       = n.link ?? "/shared-with-me";
           const isExternal = href.startsWith("http");
           return (
             <Link

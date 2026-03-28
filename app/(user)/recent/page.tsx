@@ -1,4 +1,4 @@
-// app/(user)/dashboard/recent/page.tsx
+// app/(user)/recent/page.tsx
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

@@ -11,7 +11,7 @@ export default async function RegisterPage() {
     if (session.user.role === "admin") {
       redirect("/admin");
     } else {
-      redirect("/dashboard");
+      redirect("/");
     }
   }
 

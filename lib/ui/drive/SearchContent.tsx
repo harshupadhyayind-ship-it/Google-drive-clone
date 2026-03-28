@@ -131,7 +131,7 @@ export const SearchContent = () => {
               <FolderCard
                 key={folder._id}
                 name={folder.name}
-                href={`/dashboard?folderId=${folder._id}`}
+                href={`/?folderId=${folder._id}`}
                 isStarred={folder.isStarred}
                 onRename={() => openRename(folder._id, folder.name, "folder")}
                 onStar={() => handleStar(folder._id, "folder", !folder.isStarred)}

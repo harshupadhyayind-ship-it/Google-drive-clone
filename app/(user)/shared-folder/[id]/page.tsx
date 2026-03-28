@@ -25,7 +25,7 @@ export default async function SharedFolderPage({
     sharedWithUserId: session.user.id,
   });
 
-  if (!share) redirect("/dashboard/shared-with-me");
+  if (!share) redirect("/shared-with-me");
 
   const [folders, files, folder] = await Promise.all([
     Folder.find({ parentId: id, isTrashed: { $ne: true } }).sort({ createdAt: -1 }).lean(),

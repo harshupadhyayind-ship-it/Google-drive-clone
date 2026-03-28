@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Folder, FileText, ExternalLink, Loader2 } from "lucide-react";
+import { DriveBreadcrumb } from "./DriveBreadcrumb";
 import Link from "next/link";
 
 type ShareItem = {
@@ -28,7 +29,7 @@ export const SharedWithMeContent = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Shared with me</h1>
+      <DriveBreadcrumb staticLabel="Shared with me" />
 
       {loading && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground/60">

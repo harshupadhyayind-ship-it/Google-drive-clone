@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { Folder, FileText, Star, Loader2 } from "lucide-react";
+import { DriveBreadcrumb } from "./DriveBreadcrumb";
 import Link from "next/link";
 import { Button } from "@/lib/ui/components/Button";
 import { useToast } from "@/lib/context/ToastContext";
@@ -63,7 +64,7 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Starred</h1>
+      <DriveBreadcrumb staticLabel="Starred" />
 
       {items.length === 0 && !loading ? (
         <p className="text-sm text-muted-foreground/60">No starred items</p>

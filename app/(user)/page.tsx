@@ -1,4 +1,4 @@
-// app/(user)/dashboard/page.tsx
+// app/(user)/page.tsx
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { DashboardContent } from "@/lib/ui/drive/DashboardContent";

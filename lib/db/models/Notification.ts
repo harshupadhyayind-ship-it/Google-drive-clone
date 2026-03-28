@@ -10,7 +10,7 @@ const NotificationSchema = new mongoose.Schema(
     itemName:     { type: String },
     itemType:     { type: String },
     itemId:       { type: mongoose.Schema.Types.ObjectId, default: null },
-    link:         { type: String, default: "/dashboard/shared-with-me" },
+    link:         { type: String, default: "/shared-with-me" },
     read:         { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -36,7 +36,7 @@ export default function LoginClient() {
     if (session.user.role === "admin") {
       window.location.href = "/admin";
     } else {
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     }
   };
 
@@ -103,7 +103,7 @@ export default function LoginClient() {
           variant="outline"
           className="w-full dark:bg-white/5 dark:border-white/10 dark:hover:bg-white/10 dark:text-foreground"
           onClick={() =>
-            signIn("google", { callbackUrl: "/dashboard" })
+            signIn("google", { callbackUrl: "/" })
           }
         >
           <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
