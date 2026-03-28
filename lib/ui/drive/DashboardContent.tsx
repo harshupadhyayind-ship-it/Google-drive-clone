@@ -10,14 +10,16 @@ import { useEffect, useState, useCallback } from "react";
 import { InputDialog } from "@/lib/ui/components/InputDialog";
 import { ShareDialog } from "./ShareDialog";
 import { MoveDialog } from "./MoveDialog";
-import { Star, Trash2, X, SquareCheckBig } from "lucide-react";
+import { FilePreviewModal, PreviewFile } from "./FilePreviewModal";
+import { Star, Trash2, X, SquareCheckBig, LayoutGrid, List } from "lucide-react";
 import { Button } from "@/lib/ui/components/Button";
 import { DriveBreadcrumb } from "./DriveBreadcrumb";
 
-type RenameTarget = { id: string; name: string; type: "file" | "folder" };
-type ShareTarget  = { id: string; name: string; type: "file" | "folder" };
-type MoveTarget   = { id: string; name: string; type: "file" | "folder" };
-type SelectedItem = { id: string; type: "file" | "folder" };
+type RenameTarget  = { id: string; name: string; type: "file" | "folder" };
+type ShareTarget   = { id: string; name: string; type: "file" | "folder" };
+type MoveTarget    = { id: string; name: string; type: "file" | "folder" };
+type PreviewTarget = PreviewFile;
+type SelectedItem  = { id: string; type: "file" | "folder" };
 
 export const DashboardContent = () => {
   const searchParams = useSearchParams();
@@ -27,11 +29,18 @@ export const DashboardContent = () => {
   const parentId = searchParams.get("folderId") ?? null;
   const toast = useToast();
 
+  // ── View mode (grid / list) ────────────────────────────────────────
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window === "undefined") return "grid";
+    return (localStorage.getItem("vegadrive-view-mode") as "grid" | "list") ?? "grid";
+  });
+
   // ── Single-item actions ────────────────────────────────────────────
   const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
   const [renameName,   setRenameName]   = useState("");
-  const [shareTarget,  setShareTarget]  = useState<ShareTarget | null>(null);
-  const [moveTarget,   setMoveTarget]   = useState<MoveTarget  | null>(null);
+  const [shareTarget,   setShareTarget]   = useState<ShareTarget   | null>(null);
+  const [moveTarget,    setMoveTarget]    = useState<MoveTarget    | null>(null);
+  const [previewTarget, setPreviewTarget] = useState<PreviewTarget | null>(null);
 
   // ── Multi-select state ─────────────────────────────────────────────
   const [selected, setSelected] = useState<SelectedItem[]>([]);
@@ -153,6 +162,14 @@ export const DashboardContent = () => {
     }
   };
 
+  const handleDownload = (url: string, name: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.target = "_blank";
+    a.click();
+  };
+
   const handleMove = async (targetFolderId: string | null) => {
     if (!moveTarget) return;
     const { id, type } = moveTarget;
@@ -236,17 +253,45 @@ export const DashboardContent = () => {
   return (
     <div className="space-y-6 pb-24">
       {/* Header row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <DriveBreadcrumb folderId={parentId} />
 
-        {selectionMode && (
-          <button
-            onClick={allSelected ? clearSelection : selectAll}
-            className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
-          >
-            {allSelected ? "Deselect all" : "Select all"}
-          </button>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {selectionMode && (
+            <button
+              onClick={allSelected ? clearSelection : selectAll}
+              className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+            >
+              {allSelected ? "Deselect all" : "Select all"}
+            </button>
+          )}
+
+          {/* View toggle */}
+          <div className="flex items-center border border-border rounded-lg overflow-hidden">
+            <button
+              onClick={() => { setViewMode("grid"); localStorage.setItem("vegadrive-view-mode", "grid"); }}
+              title="Grid view"
+              className={`p-1.5 transition-colors ${
+                viewMode === "grid"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <LayoutGrid size={15} />
+            </button>
+            <button
+              onClick={() => { setViewMode("list"); localStorage.setItem("vegadrive-view-mode", "list"); }}
+              title="List view"
+              className={`p-1.5 transition-colors ${
+                viewMode === "list"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <List size={15} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {isSyncing && (
@@ -258,7 +303,7 @@ export const DashboardContent = () => {
       {/* Folders section */}
       <section>
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">Folders</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className={`grid gap-3 ${viewMode === "grid" ? "grid-cols-2 md:grid-cols-4" : "grid-cols-1"}`}>
           {folders.length === 0 && (
             <p className="text-sm text-muted-foreground col-span-full">No folders</p>
           )}
@@ -267,6 +312,7 @@ export const DashboardContent = () => {
               key={folder._id ?? i}
               name={folder.name}
               href={`/?folderId=${folder._id}`}
+              viewMode={viewMode}
               isStarred={folder.isStarred}
               isSelected={isSelected(folder._id)}
               selectionMode={selectionMode}
@@ -284,7 +330,7 @@ export const DashboardContent = () => {
       {/* Files section */}
       <section>
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">Files</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className={`grid gap-3 ${viewMode === "grid" ? "grid-cols-2 md:grid-cols-4" : "grid-cols-1"}`}>
           {files.length === 0 && (
             <p className="text-sm text-muted-foreground col-span-full">No files</p>
           )}
@@ -294,6 +340,7 @@ export const DashboardContent = () => {
               id={file._id}
               name={file.name}
               href={file.url}
+              viewMode={viewMode}
               isStarred={file.isStarred}
               isSelected={isSelected(file._id)}
               selectionMode={selectionMode}
@@ -301,9 +348,11 @@ export const DashboardContent = () => {
               onRename={() => openRename(file._id, file.name, "file")}
               onStar={() => handleStar(file._id, "file", !file.isStarred)}
               onShare={() => setShareTarget({ id: file._id, name: file.name, type: "file" })}
+              onDownload={() => handleDownload(file.url, file.name)}
               onMoveTo={() => setMoveTarget({ id: file._id, name: file.name, type: "file" })}
               onCreateCopy={() => handleCreateCopy(file._id)}
               onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
+              onPreview={() => setPreviewTarget({ name: file.name, url: file.url })}
             />
           ))}
         </div>
@@ -394,6 +443,14 @@ export const DashboardContent = () => {
           onMove={handleMove}
         />
       )}
+
+      <FilePreviewModal
+        open={!!previewTarget}
+        onClose={() => setPreviewTarget(null)}
+        file={previewTarget}
+        allFiles={files.map((f: any) => ({ name: f.name, url: f.url }))}
+        onNavigate={(f) => setPreviewTarget(f)}
+      />
     </div>
   );
 };
