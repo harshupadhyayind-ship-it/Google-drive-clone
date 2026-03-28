@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
-import { UploadCloud } from "lucide-react";
+import { CloudUpload } from "lucide-react";
 import { useUpload } from "@/lib/context/UploadContext";
 
 type Props = { children: ReactNode };
@@ -58,7 +58,7 @@ export function DragDropZone({ children }: Props) {
           bg-background/80 backdrop-blur-sm border-2 border-dashed border-primary rounded-xl
           pointer-events-none">
           <div className="p-5 rounded-2xl bg-primary/10 mb-4">
-            <UploadCloud size={48} className="text-primary" />
+            <CloudUpload size={48} className="text-primary" />
           </div>
           <p className="text-lg font-semibold text-foreground">Drop files or folders here</p>
           <p className="text-sm text-muted-foreground mt-1">

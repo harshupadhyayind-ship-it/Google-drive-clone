@@ -2,7 +2,7 @@
 
 import { getFileIcon } from "@/lib/utils/fileIcon";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
-import { Pencil, Download, Trash, Star, Share2, Check, FolderInput, Copy } from "lucide-react";
+import { PenLine, Download, Trash2, Star, Share2, Check, FolderInput, Copy } from "lucide-react";
 
 type Props = {
   id: string;
@@ -42,7 +42,7 @@ export const FileCard = ({
   const menuItems: MenuItem[] = [
     {
       label: "Rename",
-      icon: <Pencil className="h-4 w-4" />,
+      icon: <PenLine className="h-4 w-4" />,
       onClick: (e?: any) => { e?.stopPropagation(); onRename?.(); },
     },
     {
@@ -73,7 +73,7 @@ export const FileCard = ({
     { separator: true },
     {
       label: "Move to Trash",
-      icon: <Trash className="h-4 w-4" />,
+      icon: <Trash2 className="h-4 w-4" />,
       variant: "destructive",
       onClick: (e?: any) => { e?.stopPropagation(); onMoveToTrash?.(); },
     },

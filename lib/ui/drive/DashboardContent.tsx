@@ -10,7 +10,7 @@ import { useEffect, useState, useCallback } from "react";
 import { InputDialog } from "@/lib/ui/components/InputDialog";
 import { ShareDialog } from "./ShareDialog";
 import { MoveDialog } from "./MoveDialog";
-import { Star, Trash2, X, CheckSquare } from "lucide-react";
+import { Star, Trash2, X, SquareCheckBig } from "lucide-react";
 import { Button } from "@/lib/ui/components/Button";
 
 type RenameTarget = { id: string; name: string; type: "file" | "folder" };
@@ -316,7 +316,7 @@ export const DashboardContent = () => {
         <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-border bg-card/95 backdrop-blur-md shadow-2xl shadow-black/30">
           {/* Count badge */}
           <div className="flex items-center gap-1.5 pr-3 border-r border-border">
-            <CheckSquare size={15} className="text-primary" />
+            <SquareCheckBig size={15} className="text-primary" />
             <span className="text-sm font-semibold text-foreground tabular-nums">
               {selected.length}
             </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Folder, Pencil, Download, Trash, Star, Share2, Check, FolderInput } from "lucide-react";
+import { Folder, PenLine, Download, Trash2, Star, Share2, Check, FolderInput } from "lucide-react";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 
 type Props = {
@@ -38,7 +38,7 @@ export const FolderCard = ({
   const menuItems: MenuItem[] = [
     {
       label: "Rename",
-      icon: <Pencil className="h-4 w-4" />,
+      icon: <PenLine className="h-4 w-4" />,
       onClick: (e?: any) => { e?.stopPropagation(); onRename?.(); },
     },
     {
@@ -64,7 +64,7 @@ export const FolderCard = ({
     { separator: true },
     {
       label: "Move to Trash",
-      icon: <Trash className="h-4 w-4" />,
+      icon: <Trash2 className="h-4 w-4" />,
       variant: "destructive",
       onClick: (e?: any) => { e?.stopPropagation(); onMoveToTrash?.(); },
     },

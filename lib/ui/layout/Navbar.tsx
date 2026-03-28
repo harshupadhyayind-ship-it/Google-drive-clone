@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "@/lib/context/ThemeContext";
-import { Search, Menu, LogOut, Folder, FileText, Sun, Moon } from "lucide-react";
+import { Search, Menu, LogOut, Folder, File, Sun, Moon } from "lucide-react";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { NotificationBell } from "./NotificationBell";
@@ -128,7 +128,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
                   onMouseDown={() => handleSelect(item)}
                 >
                   <span className={`p-1 rounded ${item.type === "folder" ? "bg-yellow-500/20 text-yellow-400" : "bg-purple-500/20 text-purple-400"}`}>
-                    {item.type === "folder" ? <Folder size={14} /> : <FileText size={14} />}
+                    {item.type === "folder" ? <Folder size={14} /> : <File size={14} />}
                   </span>
                   <span className="truncate text-slate-200">{item.name}</span>
                   <span className="ml-auto text-xs text-slate-500 shrink-0">{item.type}</span>

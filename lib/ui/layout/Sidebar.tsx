@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  HardDrive, Clock, Star, Trash2,
-  Upload, FolderUp, FolderPlus, Plus, X, Users,
+  HardDrive, History, Star, Trash2,
+  CloudUpload, FolderUp, FolderPlus, CirclePlus, X, Users,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Button } from "../components/Button";
@@ -26,7 +26,7 @@ import { InputDialog } from "@/lib/ui/components/InputDialog";
 const navItems = [
   { name: "My Drive",       path: "/dashboard",                icon: HardDrive },
   { name: "Shared with me", path: "/dashboard/shared-with-me", icon: Users     },
-  { name: "Recent",         path: "/dashboard/recent",         icon: Clock     },
+  { name: "Recent",         path: "/dashboard/recent",         icon: History   },
   { name: "Starred",        path: "/dashboard/starred",        icon: Star      },
   { name: "Trash",          path: "/dashboard/trash",          icon: Trash2    },
 ];
@@ -113,14 +113,14 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="w-full flex items-center gap-2">
-                <Plus size={16} />
+                <CirclePlus size={16} />
                 New
               </Button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-48">
               <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
-                <Upload size={16} className="mr-2" />
+                <CloudUpload size={16} className="mr-2" />
                 Upload Files
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => folderInputRef.current?.click()}>
