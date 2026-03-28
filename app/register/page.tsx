@@ -9,7 +9,7 @@ export default async function RegisterPage() {
   // ✅ server-side redirect
   if (session?.user) {
     if (session.user.role === "admin") {
-      redirect("/admin");
+      redirect("/overview");
     } else {
       redirect("/");
     }

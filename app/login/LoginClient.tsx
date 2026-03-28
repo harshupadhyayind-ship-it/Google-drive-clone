@@ -35,7 +35,7 @@ export default function LoginClient() {
     const session = await sessionRes.json();
 
     if (session.user.role === "admin") {
-      window.location.href = "/admin";
+      window.location.href = "/overview";
     } else {
       window.location.href = "/";
     }

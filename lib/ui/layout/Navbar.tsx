@@ -27,9 +27,10 @@ type Suggestion = {
 
 type Props = {
   onMenuClick?: () => void;
+  showNotifications?: boolean;
 };
 
-export const Navbar = ({ onMenuClick }: Props) => {
+export const Navbar = ({ onMenuClick, showNotifications = true }: Props) => {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -179,7 +180,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
           </Button>
         )}
 
-        <NotificationBell />
+        {showNotifications && <NotificationBell />}
 
         {/* Profile Dropdown */}
         <DropdownMenu>
