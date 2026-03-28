@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "My Drive" };
+
 // app/(user)/page.tsx
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

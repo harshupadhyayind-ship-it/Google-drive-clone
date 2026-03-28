@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Starred" };
+
 // app/(user)/starred/page.tsx
 
 import { getServerSession } from "next-auth";

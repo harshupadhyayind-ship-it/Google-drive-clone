@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Dashboard" };
+
 import { Badge } from "@/lib/ui/components/Badge";
 import { Section } from "@/lib/ui/components/Section";
 import { StatCard } from "@/lib/ui/components/StatCard";

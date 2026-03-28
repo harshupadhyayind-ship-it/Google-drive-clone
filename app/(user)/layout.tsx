@@ -1,10 +1,16 @@
 // app/(user)/layout.tsx
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { DriveProvider } from "@/lib/context/DriveContext";
 import { getDriveData } from "@/lib/services/drive";
 import { UserLayoutClient } from "@/lib/ui/layout/UserLayoutClient";
+
+// Authenticated pages — never index private user content
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function UserLayout({
   children,

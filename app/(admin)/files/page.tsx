@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Files" };
+
 import { connectDB } from "@/lib/db/connect";
 import { File } from "@/lib/db/models/File";
 import { FilesContent } from "@/lib/ui/admin/FilesContent";
