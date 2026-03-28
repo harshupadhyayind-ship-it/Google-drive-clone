@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { Search, Menu, LogOut, Folder, FileText } from "lucide-react";
+import { useTheme } from "@/lib/context/ThemeContext";
+import { Search, Menu, LogOut, Folder, File, Sun, Moon } from "lucide-react";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { NotificationBell } from "./NotificationBell";
@@ -36,6 +37,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
   const user = session?.user;
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { theme, setTheme, mounted } = useTheme();
 
   useEffect(() => {
     if (!search.trim() || !user?.id) {
@@ -94,7 +96,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
   };
 
   return (
-    <header className="h-14 border-b bg-white flex items-center px-4 gap-3 justify-between">
+    <header className="h-14 border-b border-border bg-card/95 backdrop-blur-sm flex items-center px-4 gap-3 justify-between">
       {/* Hamburger (mobile only) */}
       <Button variant="ghost" size="icon" className="md:hidden shrink-0" onClick={onMenuClick}>
         <Menu size={20} />
@@ -103,7 +105,7 @@ export const Navbar = ({ onMenuClick }: Props) => {
       {/* Search — hidden for admin */}
       {user?.role !== "admin" && (
         <div ref={wrapperRef} className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
           <Input
             placeholder="Search files..."
             value={search}
@@ -118,23 +120,23 @@ export const Navbar = ({ onMenuClick }: Props) => {
 
           {/* Suggestions dropdown */}
           {showSuggestions && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-xl shadow-lg z-50 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-[#13132a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
               {suggestions.map((item) => (
                 <button
                   key={item._id}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-muted text-left"
                   onMouseDown={() => handleSelect(item)}
                 >
-                  <span className={`p-1 rounded ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
-                    {item.type === "folder" ? <Folder size={14} /> : <FileText size={14} />}
+                  <span className={`p-1 rounded ${item.type === "folder" ? "bg-yellow-500/20 text-yellow-400" : "bg-purple-500/20 text-purple-400"}`}>
+                    {item.type === "folder" ? <Folder size={14} /> : <File size={14} />}
                   </span>
-                  <span className="truncate text-gray-800">{item.name}</span>
-                  <span className="ml-auto text-xs text-gray-400 shrink-0">{item.type}</span>
+                  <span className="truncate text-slate-200">{item.name}</span>
+                  <span className="ml-auto text-xs text-slate-500 shrink-0">{item.type}</span>
                 </button>
               ))}
 
               <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t"
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-purple-400 hover:bg-purple-500/10 border-t border-white/10"
                 onMouseDown={handleSearch}
               >
                 <Search size={14} />
@@ -147,18 +149,30 @@ export const Navbar = ({ onMenuClick }: Props) => {
 
       {/* Right Section */}
       <div className="flex items-center gap-2 shrink-0 ml-auto">
+        {/* Theme Toggle — only render after mount to avoid SSR/client mismatch */}
+        {mounted && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </Button>
+        )}
+
         <NotificationBell />
 
         {/* Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-medium cursor-pointer select-none">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white flex items-center justify-center font-medium cursor-pointer select-none shadow-lg">
               {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuLabel className="font-normal text-gray-600 truncate">
+            <DropdownMenuLabel className="font-normal text-muted-foreground truncate">
               {user?.email}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

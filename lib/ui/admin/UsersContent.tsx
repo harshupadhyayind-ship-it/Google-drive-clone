@@ -51,25 +51,19 @@ export const UsersContent = ({ initialUsers, initialTotal }: Props) => {
     }
   }, [toast]);
 
-  // Debounced search
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       setSearch(searchInput);
       setPage(1);
     }, 300);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [searchInput]);
 
   useEffect(() => {
-    if (page === 1) {
-      fetchUsers(search, 1, true);
-    }
+    if (page === 1) fetchUsers(search, 1, true);
   }, [search, fetchUsers]);
 
-  // Infinite scroll
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -96,9 +90,7 @@ export const UsersContent = ({ initialUsers, initialTotal }: Props) => {
         body: JSON.stringify({ role: newRole }),
       });
       if (!res.ok) throw new Error();
-      setUsers((prev) =>
-        prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
-      );
+      setUsers((prev) => prev.map((u) => (u._id === id ? { ...u, role: newRole } : u)));
       toast.success(`Role changed to ${newRole}`);
     } catch {
       toast.error("Failed to update role");
@@ -121,13 +113,13 @@ export const UsersContent = ({ initialUsers, initialTotal }: Props) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">Users</h1>
-        <span className="text-sm text-gray-500">{total} total</span>
+        <h1 className="text-2xl font-semibold text-foreground">Users</h1>
+        <span className="text-sm text-muted-foreground">{total} total</span>
       </div>
 
       {/* Search */}
       <div className="relative max-w-sm">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Search by name or email..."
           value={searchInput}
@@ -137,42 +129,40 @@ export const UsersContent = ({ initialUsers, initialTotal }: Props) => {
       </div>
 
       {/* Table */}
-      <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Role</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Files</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Joined</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">Actions</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Email</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Role</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Files</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Joined</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-border">
               {users.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-400">
+                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
                     No users found
                   </td>
                 </tr>
               )}
               {users.map((user, i) => (
-                <tr key={user._id ?? i} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
-                  <td className="px-4 py-3 text-gray-500 max-w-[180px] truncate">{user.email}</td>
+                <tr key={user._id ?? i} className="hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 font-medium text-foreground">{user.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground max-w-[180px] truncate">{user.email}</td>
                   <td className="px-4 py-3">
                     <Badge variant={user.role === "admin" ? "admin" : "user"}>
                       {user.role}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{user.fileCount}</td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3 text-muted-foreground">{user.fileCount}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
+                      year: "numeric", month: "short", day: "numeric",
                     })}
                   </td>
                   <td className="px-4 py-3">
@@ -207,11 +197,10 @@ export const UsersContent = ({ initialUsers, initialTotal }: Props) => {
           </table>
         </div>
 
-        {/* Infinite scroll sentinel */}
         <div ref={sentinelRef} className="py-3 flex justify-center">
-          {loading && <Loader2 size={18} className="animate-spin text-gray-400" />}
+          {loading && <Loader2 size={18} className="animate-spin text-muted-foreground" />}
           {!hasMore && users.length > 0 && (
-            <p className="text-xs text-gray-400">All users loaded</p>
+            <p className="text-xs text-muted-foreground">All users loaded</p>
           )}
         </div>
       </div>

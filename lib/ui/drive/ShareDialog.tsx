@@ -181,7 +181,7 @@ export const ShareDialog = ({ open, onOpenChange, itemId, itemType, itemName }: 
         </DialogHeader>
 
         {/* Item info */}
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+        <div className="flex items-center gap-3 p-3 bg-muted rounded-xl">
           <div className={`p-2 rounded-lg shrink-0 ${itemType === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
             {itemType === "folder" ? <Folder size={16} /> : <FileText size={16} />}
           </div>
@@ -190,11 +190,11 @@ export const ShareDialog = ({ open, onOpenChange, itemId, itemType, itemName }: 
 
         {/* ── People section ── */}
         <div className="space-y-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Share with people</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Share with people</p>
 
           {/* Search input */}
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               placeholder="Search by name or email..."
               value={searchInput}
@@ -208,14 +208,14 @@ export const ShareDialog = ({ open, onOpenChange, itemId, itemType, itemName }: 
             <div className="border rounded-xl overflow-hidden">
               {searchLoading && (
                 <div className="flex items-center justify-center py-3">
-                  <Loader2 size={16} className="animate-spin text-gray-400" />
+                  <Loader2 size={16} className="animate-spin text-muted-foreground/60" />
                 </div>
               )}
               {searchResults.map((user) => (
-                <div key={user._id} className="flex items-center justify-between gap-2 px-3 py-2 hover:bg-gray-50">
+                <div key={user._id} className="flex items-center justify-between gap-2 px-3 py-2 hover:bg-muted/50">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>
-                    <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                    <p className="text-xs text-muted-foreground/60 truncate">{user.email}</p>
                   </div>
                   <Button
                     size="sm"
@@ -232,7 +232,7 @@ export const ShareDialog = ({ open, onOpenChange, itemId, itemType, itemName }: 
                 </div>
               ))}
               {!searchLoading && searchResults.length === 0 && searchInput.length >= 2 && (
-                <p className="text-sm text-gray-400 text-center py-3">No users found</p>
+                <p className="text-sm text-muted-foreground/60 text-center py-3">No users found</p>
               )}
             </div>
           )}
@@ -240,21 +240,21 @@ export const ShareDialog = ({ open, onOpenChange, itemId, itemType, itemName }: 
           {/* Users with access */}
           {userShares.length > 0 && (
             <div className="space-y-1">
-              <p className="text-xs text-gray-400">People with access</p>
+              <p className="text-xs text-muted-foreground/60">People with access</p>
               {userShares.map((share) => (
-                <div key={share._id} className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50">
+                <div key={share._id} className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg hover:bg-muted/50">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-medium shrink-0">
                       {share.sharedWithUserId?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-gray-800 truncate">{share.sharedWithUserId?.name}</p>
-                      <p className="text-xs text-gray-400 truncate">{share.sharedWithUserId?.email}</p>
+                      <p className="text-xs text-muted-foreground/60 truncate">{share.sharedWithUserId?.email}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => handleRemoveUserShare(share._id, share.sharedWithUserId?.name ?? "")}
-                    className="shrink-0 text-gray-400 hover:text-red-500 transition-colors"
+                    className="shrink-0 text-muted-foreground/60 hover:text-red-500 transition-colors"
                   >
                     <X size={14} />
                   </button>
@@ -267,17 +267,17 @@ export const ShareDialog = ({ open, onOpenChange, itemId, itemType, itemName }: 
         {/* ── Public link section ── */}
         <div className="space-y-2 pt-3 border-t overflow-hidden">
           <div className="flex items-center gap-2">
-            <Globe size={14} className="text-gray-400 shrink-0" />
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Public link</p>
+            <Globe size={14} className="text-muted-foreground/60 shrink-0" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Public link</p>
           </div>
 
           {publicShare ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Link size={13} className="text-gray-400 shrink-0" />
-                <p className="text-xs text-gray-500">Anyone with the link can view</p>
+                <Link size={13} className="text-muted-foreground/60 shrink-0" />
+                <p className="text-xs text-muted-foreground">Anyone with the link can view</p>
               </div>
-              <div className="w-full px-3 py-2 bg-gray-100 rounded-lg text-xs text-gray-600 truncate font-mono">
+              <div className="w-full px-3 py-2 bg-muted rounded-lg text-xs text-muted-foreground truncate font-mono">
                 {shareUrl}
               </div>
               <div className="flex gap-2">

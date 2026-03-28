@@ -1,21 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  HardDrive,
-  Clock,
-  Star,
-  Trash2,
-  Upload,
-  FolderPlus,
-  Plus,
-  X,
-  Users,
+  HardDrive, History, Star, Trash2,
+  CloudUpload, FolderUp, FolderPlus, CirclePlus, X, Users,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { useDrive } from "@/lib/context/DriveContext";
+import { useUpload } from "@/lib/context/UploadContext";
 import { useSearchParams } from "next/navigation";
 
 import {
@@ -23,16 +18,17 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/lib/ui/components/Menu/dropdown-menu";
 
 import { InputDialog } from "@/lib/ui/components/InputDialog";
 
-const menuItems = [
-  { name: "My Drive", path: "/dashboard", icon: HardDrive },
-  { name: "Shared with me", path: "/dashboard/shared-with-me", icon: Users },
-  { name: "Recent", path: "/dashboard/recent", icon: Clock },
-  { name: "Starred", path: "/dashboard/starred", icon: Star },
-  { name: "Trash", path: "/dashboard/trash", icon: Trash2 },
+const navItems = [
+  { name: "My Drive",       path: "/dashboard",                icon: HardDrive },
+  { name: "Shared with me", path: "/dashboard/shared-with-me", icon: Users     },
+  { name: "Recent",         path: "/dashboard/recent",         icon: History   },
+  { name: "Starred",        path: "/dashboard/starred",        icon: Star      },
+  { name: "Trash",          path: "/dashboard/trash",          icon: Trash2    },
 ];
 
 type Props = {
@@ -42,45 +38,46 @@ type Props = {
 };
 
 export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
-  const pathname = usePathname();
+  const pathname     = usePathname();
   const searchParams = useSearchParams();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { setFiles, user, setFolders } = useDrive();
+  const fileInputRef   = useRef<HTMLInputElement | null>(null);
+  const folderInputRef = useRef<HTMLInputElement | null>(null);
 
-  const currentFolderId = searchParams.get("folderId");
+  const { user, setFolders } = useDrive();
+  const { uploadFiles, uploadFolderFileList, storageVersion } = useUpload();
+  const currentFolderId = searchParams.get("folderId") ?? "";
 
-  const [open, setOpen] = useState(false);
+  const [open,       setOpen]       = useState(false);
   const [folderName, setFolderName] = useState("");
-  const [storage, setStorage] = useState({ usedMB: 0, totalMB: 100, percent: 0 });
+  const [storage,    setStorage]    = useState({ usedMB: 0, totalMB: 100, percent: 0 });
 
+  // webkitdirectory is non-standard — set imperatively to avoid TS errors
   useEffect(() => {
-    fetch("/api/storage")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.usedMB !== undefined) setStorage(d);
-      })
-      .catch(() => {});
+    const input = folderInputRef.current;
+    if (input) {
+      input.setAttribute("webkitdirectory", "");
+      input.setAttribute("multiple", "");
+    }
   }, []);
 
-  const handleUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userId", user.id);
-    formData.append("folderId", currentFolderId || "");
-
-    const res = await fetch("/api/file", { method: "POST", body: formData });
-    const saved = await res.json();
-    setFiles((prev: any) => [saved, ...prev]);
+  const fetchStorage = () => {
+    fetch("/api/storage")
+      .then((r) => r.json())
+      .then((d) => { if (d.usedMB !== undefined) setStorage(d); })
+      .catch(() => {});
   };
 
+  // Fetch on mount and after every upload batch
+  useEffect(() => { fetchStorage(); }, [storageVersion]);
+
   const handleCreateFolder = async () => {
-    if (!folderName) return;
+    if (!folderName.trim()) return;
 
     const res = await fetch("/api/folder", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: folderName, parentId: currentFolderId, userId }),
+      body: JSON.stringify({ name: folderName.trim(), parentId: currentFolderId || null, userId }),
     });
 
     const saved = await res.json();
@@ -89,48 +86,48 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
     setOpen(false);
   };
 
-  // On mobile: fixed overlay when open, hidden when closed
-  // On desktop: always visible as w-64
   const asideClass = isOpen
-    ? "fixed inset-y-0 left-0 z-50 flex flex-col w-64 h-full bg-white border-r p-4"
-    : "hidden md:flex md:flex-col md:w-64 h-full bg-white border-r p-4";
+    ? "fixed inset-y-0 left-0 z-50 flex flex-col w-64 h-full bg-sidebar border-r border-sidebar-border p-4"
+    : "hidden md:flex md:flex-col md:w-64 h-full bg-sidebar border-r border-sidebar-border p-4";
 
   return (
     <>
-      {/* Dark overlay on mobile when sidebar is open */}
+      {/* Mobile overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={onClose} />
       )}
 
       <aside className={asideClass}>
-        {/* Logo + close button */}
+        {/* Logo + close */}
         <div className="flex items-center justify-between mb-6 px-2">
-          <Link href="/dashboard" className="text-xl font-semibold">
-            Drive
+          <Link href="/dashboard">
+            <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
           </Link>
           <Button variant="ghost" size="icon" className="md:hidden" onClick={onClose}>
             <X size={18} />
           </Button>
         </div>
 
-        {/* New Button */}
+        {/* New button dropdown */}
         <div className="mb-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="w-full flex items-center gap-2">
-                <Plus size={16} />
+                <CirclePlus size={16} />
                 New
               </Button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-48">
               <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
-                <Upload size={16} className="mr-2" />
-                Upload File
+                <CloudUpload size={16} className="mr-2" />
+                Upload Files
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => folderInputRef.current?.click()}>
+                <FolderUp size={16} className="mr-2" />
+                Upload Folder
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setOpen(true)}>
                 <FolderPlus size={16} className="mr-2" />
                 New Folder
@@ -138,20 +135,37 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Hidden: multi-file picker */}
           <input
             type="file"
+            multiple
             ref={fileInputRef}
             className="hidden"
             onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleUpload(file);
+              if (e.target.files?.length) {
+                uploadFiles(Array.from(e.target.files), currentFolderId);
+                e.target.value = "";
+              }
+            }}
+          />
+
+          {/* Hidden: folder picker (webkitdirectory set via useEffect) */}
+          <input
+            type="file"
+            ref={folderInputRef}
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                uploadFolderFileList(e.target.files, currentFolderId);
+                e.target.value = "";
+              }
             }}
           />
         </div>
 
-        {/* Menu */}
+        {/* Nav */}
         <nav className="flex flex-col gap-1">
-          {menuItems.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.path;
             const Icon = item.icon;
             return (
@@ -159,10 +173,10 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
                 key={item.name}
                 href={item.path}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
                   isActive
-                    ? "bg-blue-100 text-blue-600 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-primary/15 text-primary font-medium border border-primary/20"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                 }`}
               >
                 <Icon size={18} />
@@ -172,25 +186,25 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
           })}
         </nav>
 
-        {/* Storage */}
+        {/* Storage bar */}
         <div className="mt-auto pt-6">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs text-gray-500">Storage</p>
-            <p className="text-xs text-gray-500">{storage.percent}%</p>
+            <p className="text-xs text-muted-foreground">Storage</p>
+            <p className="text-xs text-muted-foreground">{storage.percent}%</p>
           </div>
-          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-sidebar-accent h-2 rounded-full overflow-hidden">
             <div
               className={`h-2 rounded-full transition-all ${
                 storage.percent >= 90
                   ? "bg-red-500"
                   : storage.percent >= 70
                   ? "bg-yellow-500"
-                  : "bg-blue-500"
+                  : "bg-gradient-to-r from-purple-500 to-blue-500"
               }`}
               style={{ width: `${storage.percent}%` }}
             />
           </div>
-          <p className="text-xs mt-1 text-gray-600">
+          <p className="text-xs mt-1 text-muted-foreground">
             {storage.usedMB} MB of {storage.totalMB} MB used
           </p>
         </div>

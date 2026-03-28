@@ -31,14 +31,14 @@ export const SharedWithMeContent = () => {
       <h1 className="text-2xl font-semibold">Shared with me</h1>
 
       {loading && (
-        <div className="flex items-center gap-2 text-sm text-gray-400">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground/60">
           <Loader2 size={16} className="animate-spin" />
           Loading...
         </div>
       )}
 
       {!loading && items.length === 0 && (
-        <p className="text-sm text-gray-400">Nothing shared with you yet</p>
+        <p className="text-sm text-muted-foreground/60">Nothing shared with you yet</p>
       )}
 
       {!loading && items.length > 0 && (
@@ -51,15 +51,15 @@ export const SharedWithMeContent = () => {
             return (
               <div
                 key={item._id}
-                className="flex items-center justify-between p-3 border rounded-xl bg-white hover:shadow-sm transition-all"
+                className="flex items-center justify-between p-3 border border-border rounded-xl bg-card hover:shadow-sm transition-all"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`p-2 rounded-lg shrink-0 ${item.itemType === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
+                  <div className={`p-2 rounded-lg shrink-0 ${item.itemType === "folder" ? "bg-yellow-500/15 text-yellow-500" : "bg-primary/15 text-primary"}`}>
                     {item.itemType === "folder" ? <Folder size={18} /> : <FileText size={18} />}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{item.itemName}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-medium text-foreground truncate">{item.itemName}</p>
+                    <p className="text-xs text-muted-foreground/60">
                       Shared by {item.ownerId?.name ?? "Unknown"} ·{" "}
                       {new Date(item.createdAt).toLocaleDateString(undefined, {
                         month: "short",
@@ -72,7 +72,7 @@ export const SharedWithMeContent = () => {
                 <Link
                   href={href}
                   target={item.itemType === "file" ? "_blank" : undefined}
-                  className="shrink-0 ml-3 p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  className="shrink-0 ml-3 p-2 text-muted-foreground/60 hover:text-primary transition-colors"
                 >
                   <ExternalLink size={16} />
                 </Link>

@@ -53,22 +53,17 @@ export const FoldersContent = ({ initialFolders, initialTotal }: Props) => {
     [toast]
   );
 
-  // Debounced search
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       setSearch(searchInput);
       setPage(1);
     }, 300);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [searchInput]);
 
   useEffect(() => {
-    if (page === 1) {
-      fetchFolders(search, 1, showTrashed, true);
-    }
+    if (page === 1) fetchFolders(search, 1, showTrashed, true);
   }, [search, showTrashed, fetchFolders]);
 
   const handleToggleTrashed = () => {
@@ -76,7 +71,6 @@ export const FoldersContent = ({ initialFolders, initialTotal }: Props) => {
     setPage(1);
   };
 
-  // Infinite scroll
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -111,14 +105,14 @@ export const FoldersContent = ({ initialFolders, initialTotal }: Props) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">Folders</h1>
-        <span className="text-sm text-gray-500">{total} total</span>
+        <h1 className="text-2xl font-semibold text-foreground">Folders</h1>
+        <span className="text-sm text-muted-foreground">{total} total</span>
       </div>
 
       {/* Controls */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative max-w-sm flex-1">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search folders..."
             value={searchInput}
@@ -137,50 +131,48 @@ export const FoldersContent = ({ initialFolders, initialTotal }: Props) => {
       </div>
 
       {/* Table */}
-      <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Folder Name</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Owner</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Created</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">Actions</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Folder Name</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Owner</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Created</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-border">
               {folders.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-sm text-gray-400">
+                  <td colSpan={4} className="px-4 py-8 text-center text-sm text-muted-foreground">
                     No folders found
                   </td>
                 </tr>
               )}
               {folders.map((folder, i) => (
-                <tr key={folder._id ?? i} className="hover:bg-gray-50 transition-colors">
+                <tr key={folder._id ?? i} className="hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-gray-800">
-                      <div className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600 shrink-0">
+                    <div className="flex items-center gap-2 text-foreground">
+                      <div className="p-1.5 rounded-lg bg-yellow-500/15 text-yellow-500 shrink-0">
                         <Folder size={14} />
                       </div>
                       <span className="font-medium truncate max-w-[200px]">{folder.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3">
                     {folder.userId ? (
                       <div>
-                        <p className="font-medium text-gray-700">{folder.userId.name}</p>
-                        <p className="text-xs text-gray-400 truncate max-w-[160px]">{folder.userId.email}</p>
+                        <p className="font-medium text-foreground">{folder.userId.name}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[160px]">{folder.userId.email}</p>
                       </div>
                     ) : (
-                      <span className="text-gray-400">Unknown</span>
+                      <span className="text-muted-foreground">Unknown</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {new Date(folder.createdAt).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
+                      year: "numeric", month: "short", day: "numeric",
                     })}
                   </td>
                   <td className="px-4 py-3">
@@ -202,11 +194,10 @@ export const FoldersContent = ({ initialFolders, initialTotal }: Props) => {
           </table>
         </div>
 
-        {/* Infinite scroll sentinel */}
         <div ref={sentinelRef} className="py-3 flex justify-center">
-          {loading && <Loader2 size={18} className="animate-spin text-gray-400" />}
+          {loading && <Loader2 size={18} className="animate-spin text-muted-foreground" />}
           {!hasMore && folders.length > 0 && (
-            <p className="text-xs text-gray-400">All folders loaded</p>
+            <p className="text-xs text-muted-foreground">All folders loaded</p>
           )}
         </div>
       </div>
