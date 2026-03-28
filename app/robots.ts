@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         // Only the public marketing/auth pages should be crawled
-        allow: ["/login", "/register"],
+        allow: ["/login", "/register", "/verify-email"],
         // Block all private/authenticated routes
         disallow: [
           "/",

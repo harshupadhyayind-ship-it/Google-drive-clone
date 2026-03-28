@@ -34,6 +34,11 @@ export const authOptions = {
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
 
+        // Block login until email is verified
+        if (!user.isVerified) {
+          throw new Error("EMAIL_NOT_VERIFIED");
+        }
+
         return {
           id: user._id.toString(),
           name: user.name,
@@ -64,7 +69,12 @@ export const authOptions = {
             email: user.email,
             password: "", // no password for google users
             role: "user",
+            isVerified: true, // Google already verified the email
           });
+        } else if (!existing.isVerified) {
+          // If existing user signed up with credentials but never verified,
+          // auto-verify now that they proved ownership via Google
+          await User.updateOne({ _id: existing._id }, { isVerified: true });
         }
       }
 
