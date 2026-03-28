@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Input } from "@/lib/ui/components/Input";
 import { Button } from "@/lib/ui/components/Button";
 
@@ -35,14 +36,18 @@ export default function RegisterClient() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-sm space-y-4 p-6 bg-white border rounded-xl shadow-sm"
+        className="w-full max-w-md space-y-4 p-8 bg-card border border-border rounded-2xl shadow-2xl"
       >
-        <h1 className="text-xl font-semibold text-center">
+        <div className="flex justify-center mb-2">
+          <Image src="/logo.svg" alt="NovaDrive" width={180} height={45} priority />
+        </div>
+        <h1 className="text-lg font-semibold text-center text-foreground">
           Create Account
         </h1>
+        <p className="text-xs text-center text-muted-foreground -mt-2">Join NovaDrive — free forever</p>
 
         {/* Name */}
         <div>
@@ -108,10 +113,10 @@ export default function RegisterClient() {
         </Button>
 
         {/* Footer */}
-        <p className="text-xs text-center text-gray-500">
+        <p className="text-xs text-center text-slate-500">
           Already have an account?{" "}
           <span
-            className="text-blue-600 cursor-pointer"
+            className="text-purple-400 hover:text-purple-300 cursor-pointer"
             onClick={() => router.push("/login")}
           >
             Login

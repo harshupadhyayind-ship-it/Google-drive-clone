@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" width="280" height="60">
+  <defs>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7" />
+      <stop offset="100%" style="stop-color:#3b82f6" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#c084fc" />
+      <stop offset="100%" style="stop-color:#60a5fa" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Icon group -->
+  <g transform="translate(6, 6)" filter="url(#glow)">
+    <!-- Cloud -->
+    <path d="M42 33Q42 40 35 40L13 40Q6 40 6 33Q6 27 11 25.5Q10 15 20 15Q27 15 30 20Q32 18 36 19Q43 20 42 27Z"
+      fill="url(#iconGrad)" opacity="0.18"/>
+    <path d="M42 33Q42 40 35 40L13 40Q6 40 6 33Q6 27 11 25.5Q10 15 20 15Q27 15 30 20Q32 18 36 19Q43 20 42 27Z"
+      fill="none" stroke="url(#iconGrad)" stroke-width="1.8"/>
+    <!-- Arrow up -->
+    <line x1="24" y1="37" x2="24" y2="24" stroke="url(#iconGrad)" stroke-width="2.2" stroke-linecap="round"/>
+    <polyline points="19,29 24,23 29,29" fill="none" stroke="url(#iconGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Stars -->
+    <circle cx="38" cy="11" r="1.5" fill="#c084fc" opacity="0.9"/>
+    <circle cx="43" cy="7"  r="1"   fill="#818cf8" opacity="0.7"/>
+    <circle cx="45" cy="14" r="0.8" fill="#60a5fa" opacity="0.6"/>
+  </g>
+
+  <!-- "Nova" bold gradient -->
+  <text x="66" y="40"
+    font-family="'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="26" font-weight="800" letter-spacing="-0.5"
+    fill="url(#textGrad)">Nova</text>
+
+  <!-- "Drive" light white -->
+  <text x="131" y="40"
+    font-family="'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="26" font-weight="300" letter-spacing="-0.5"
+    fill="#e2e8f0" opacity="0.9">Drive</text>
+
+  <!-- Tagline -->
+  <text x="66" y="53"
+    font-family="'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="8" font-weight="400" letter-spacing="2.5"
+    fill="#7c8ca8" opacity="0.8">YOUR FILES. ANYWHERE.</text>
+</svg>

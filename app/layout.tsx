@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Drive App",
-  description: "Google Drive Clone",
+  title: "NovaDrive",
+  description: "NovaDrive — Your Files. Anywhere.",
 };
 
 export default function RootLayout({
@@ -27,8 +27,17 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-screen bg-gray-50 text-gray-900">
+      <head>
+        {/* Blocking script: apply saved theme BEFORE first paint to prevent white flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('novadrive-theme');if(t==='light'){document.documentElement.classList.add('light');document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-background text-foreground">
         <Providers>
           {children}
         </Providers>

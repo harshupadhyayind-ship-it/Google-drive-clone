@@ -66,7 +66,7 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
       <h1 className="text-2xl font-semibold">Starred</h1>
 
       {items.length === 0 && !loading ? (
-        <p className="text-sm text-gray-400">No starred items</p>
+        <p className="text-sm text-muted-foreground/60">No starred items</p>
       ) : (
         <div className="flex flex-col gap-2">
           {items.map((item, i) => {
@@ -77,7 +77,7 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
             return (
               <div
                 key={item._id ?? i}
-                className="flex items-center justify-between p-3 border rounded-xl bg-white hover:shadow-sm transition-shadow"
+                className="flex items-center justify-between p-3 border border-border rounded-xl bg-card hover:shadow-sm transition-shadow"
               >
                 {/* Clickable area */}
                 <Link
@@ -86,16 +86,16 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
                   rel={item.type === "file" ? "noopener noreferrer" : undefined}
                   className="flex items-center gap-3 min-w-0 flex-1"
                 >
-                  <div className={`p-2 rounded-lg shrink-0 ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
+                  <div className={`p-2 rounded-lg shrink-0 ${item.type === "folder" ? "bg-yellow-500/15 text-yellow-500" : "bg-primary/15 text-primary"}`}>
                     {item.type === "folder" ? <Folder size={18} /> : <FileText size={18} />}
                   </div>
-                  <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
                 </Link>
 
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-yellow-500 hover:text-yellow-600 shrink-0 ml-2"
+                  className="text-yellow-500 hover:text-yellow-500 shrink-0 ml-2"
                   onClick={() => handleUnstar(item._id, item.type)}
                 >
                   <Star size={15} className="mr-1 fill-yellow-400" />
@@ -107,8 +107,8 @@ export const StarredContent = ({ initialFolders, initialFiles }: Props) => {
 
           {/* Infinite scroll sentinel */}
           <div ref={sentinelRef} className="py-2 flex justify-center">
-            {loading && <Loader2 size={18} className="animate-spin text-gray-400" />}
-            {!hasMore && items.length > 0 && <p className="text-xs text-gray-400">No more items</p>}
+            {loading && <Loader2 size={18} className="animate-spin text-muted-foreground/60" />}
+            {!hasMore && items.length > 0 && <p className="text-xs text-muted-foreground/60">No more items</p>}
           </div>
         </div>
       )}

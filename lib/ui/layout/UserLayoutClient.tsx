@@ -22,7 +22,7 @@ export const UserLayoutClient = ({ userId, children }: Props) => {
       />
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="p-4 overflow-auto flex-1">{children}</main>
+        <main className="p-4 overflow-auto flex-1 bg-background">{children}</main>
       </div>
     </ToastProvider>
   );

@@ -15,7 +15,7 @@ export function Input({ className, type, ...props }: InputProps) {
         type={isPassword ? (showPassword ? "text" : "password") : type}
         data-slot="input"
         className={cn(
-          "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 pr-10 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 md:text-sm",
+          "h-10 w-full min-w-0 rounded-lg border border-input bg-muted/30 px-3 py-2 pr-10 text-base text-foreground transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
           className
         )}
         {...props}
@@ -26,7 +26,7 @@ export function Input({ className, type, ...props }: InputProps) {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-black"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
         >
           {showPassword ? "🙈" : "👁"}
         </button>

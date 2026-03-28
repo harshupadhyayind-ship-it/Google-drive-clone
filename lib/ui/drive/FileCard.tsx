@@ -70,15 +70,15 @@ export const FileCard = ({
 
   return (
     <Link href={href || "#"} target="_blank" onClick={handleClick}>
-      <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-blue-400 transition-all cursor-pointer">
+      <div className="group flex items-center justify-between gap-3 p-3 border border-border rounded-xl bg-card hover:shadow-md hover:border-primary/40 transition-all cursor-pointer">
 
         {/* LEFT SIDE */}
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+          <div className="p-2 bg-primary/15 text-primary rounded-lg">
             <Icon size={18} />
           </div>
 
-          <p className="text-sm font-medium text-gray-800 truncate group-hover:text-blue-600">
+          <p className="text-sm font-medium text-foreground truncate group-hover:text-primary">
             {name}
           </p>
         </div>

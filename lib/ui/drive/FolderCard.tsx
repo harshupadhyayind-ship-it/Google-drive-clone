@@ -57,15 +57,15 @@ export const FolderCard = ({
 
   return (
     <Link href={href}>
-      <div className="group flex items-center justify-between gap-3 p-3 border rounded-xl bg-white hover:shadow-md hover:border-yellow-400 transition-all cursor-pointer">
+      <div className="group flex items-center justify-between gap-3 p-3 border border-border rounded-xl bg-card hover:shadow-md hover:border-yellow-400/60 transition-all cursor-pointer">
 
         {/* LEFT SIDE */}
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="p-2 bg-yellow-100 text-yellow-600 rounded-lg">
+          <div className="p-2 bg-yellow-500/15 text-yellow-500 rounded-lg">
             <Folder size={18} />
           </div>
 
-          <p className="text-sm font-medium text-gray-800 truncate group-hover:text-yellow-600">
+          <p className="text-sm font-medium text-foreground truncate group-hover:text-yellow-500">
             {name}
           </p>
         </div>

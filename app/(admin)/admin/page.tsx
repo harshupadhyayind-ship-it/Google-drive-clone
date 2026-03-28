@@ -42,7 +42,7 @@ export default async function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+      <h1 className="text-2xl font-semibold text-foreground">Admin Dashboard</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -76,27 +76,27 @@ export default async function AdminPage() {
       <Section title="Recent Users">
         <Table>
           <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Name</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Email</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Role</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Joined</th>
+            <tr className="bg-muted/50 border-b border-border">
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Name</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Email</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Role</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Joined</th>
             </tr>
           </thead>
           <tbody className="divide-y text-sm">
             {stats.recentUsers.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-gray-400">No users yet</td>
+                <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">No users yet</td>
               </tr>
             )}
             {stats.recentUsers.map((user: any) => (
-              <tr key={user._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
-                <td className="px-4 py-3 text-gray-500">{user.email}</td>
+              <tr key={user._id} className="hover:bg-muted/30 transition-colors">
+                <td className="px-4 py-3 font-medium text-foreground">{user.name}</td>
+                <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
                 <td className="px-4 py-3">
                   <Badge variant={user.role === "admin" ? "admin" : "user"}>{user.role}</Badge>
                 </td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="px-4 py-3 text-muted-foreground">
                   {new Date(user.createdAt).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",
@@ -113,25 +113,25 @@ export default async function AdminPage() {
       <Section title="Recent Files">
         <Table>
           <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">File Name</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Owner</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Size</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Uploaded</th>
+            <tr className="bg-muted/50 border-b border-border">
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">File Name</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Owner</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Size</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Uploaded</th>
             </tr>
           </thead>
           <tbody className="divide-y text-sm">
             {stats.recentFiles.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-gray-400">No files yet</td>
+                <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">No files yet</td>
               </tr>
             )}
             {stats.recentFiles.map((file: any) => (
-              <tr key={file._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-800 max-w-[200px] truncate">{file.name}</td>
-                <td className="px-4 py-3 text-gray-500">{file.userId?.name ?? "Unknown"}</td>
-                <td className="px-4 py-3 text-gray-500">{file.size ?? "—"}</td>
-                <td className="px-4 py-3 text-gray-500">
+              <tr key={file._id} className="hover:bg-muted/30 transition-colors">
+                <td className="px-4 py-3 font-medium text-foreground max-w-[200px] truncate">{file.name}</td>
+                <td className="px-4 py-3 text-muted-foreground">{file.userId?.name ?? "Unknown"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{file.size ?? "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">
                   {new Date(file.createdAt).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",
@@ -148,30 +148,30 @@ export default async function AdminPage() {
       <Section title="Recent Folders">
         <Table>
           <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Folder Name</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Owner</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Created</th>
+            <tr className="bg-muted/50 border-b border-border">
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Folder Name</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Owner</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">Created</th>
             </tr>
           </thead>
           <tbody className="divide-y text-sm">
             {stats.recentFolders.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-6 text-center text-gray-400">No folders yet</td>
+                <td colSpan={3} className="px-4 py-6 text-center text-muted-foreground">No folders yet</td>
               </tr>
             )}
             {stats.recentFolders.map((folder: any) => (
-              <tr key={folder._id} className="hover:bg-gray-50">
+              <tr key={folder._id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600 shrink-0">
+                    <div className="p-1.5 rounded-lg bg-yellow-500/15 text-yellow-500 shrink-0">
                       <FolderIcon size={13} />
                     </div>
-                    <span className="font-medium text-gray-800 truncate max-w-[180px]">{folder.name}</span>
+                    <span className="font-medium text-foreground truncate max-w-[180px]">{folder.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-gray-500">{folder.userId?.name ?? "Unknown"}</td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="px-4 py-3 text-muted-foreground">{folder.userId?.name ?? "Unknown"}</td>
+                <td className="px-4 py-3 text-muted-foreground">
                   {new Date(folder.createdAt).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",

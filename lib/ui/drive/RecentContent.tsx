@@ -38,7 +38,7 @@ export const RecentContent = ({ initialItems }: Props) => {
       <h1 className="text-2xl font-semibold">Recent</h1>
 
       {items.length === 0 && !loading ? (
-        <p className="text-sm text-gray-400">No recent items</p>
+        <p className="text-sm text-muted-foreground/60">No recent items</p>
       ) : (
         <div className="flex flex-col gap-2">
           {items.map((item: Item, i: number) => {
@@ -53,15 +53,15 @@ export const RecentContent = ({ initialItems }: Props) => {
                 href={href}
                 target={item.type === "file" ? "_blank" : undefined}
               >
-                <div className="flex items-center justify-between p-3 border rounded-xl bg-white hover:shadow-md transition-all">
+                <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-card hover:shadow-md transition-all">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${item.type === "folder" ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"}`}>
+                    <div className={`p-2 rounded-lg ${item.type === "folder" ? "bg-yellow-500/15 text-yellow-500" : "bg-primary/15 text-primary"}`}>
                       {item.type === "folder" ? <Folder size={18} /> : <FileText size={18} />}
                     </div>
-                    <p className="text-sm font-medium text-gray-800">{item.name}</p>
+                    <p className="text-sm font-medium text-foreground">{item.name}</p>
                   </div>
 
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-muted-foreground/60">
                     {new Date(item.lastAccessedAt).toLocaleDateString(undefined, {
                       month: "short",
                       day: "numeric",
@@ -76,8 +76,8 @@ export const RecentContent = ({ initialItems }: Props) => {
 
           {/* Infinite scroll sentinel */}
           <div ref={sentinelRef} className="py-2 flex justify-center">
-            {loading && <Loader2 size={18} className="animate-spin text-gray-400" />}
-            {!hasMore && items.length > 0 && <p className="text-xs text-gray-400">No more items</p>}
+            {loading && <Loader2 size={18} className="animate-spin text-muted-foreground/60" />}
+            {!hasMore && items.length > 0 && <p className="text-xs text-muted-foreground/60">No more items</p>}
           </div>
         </div>
       )}

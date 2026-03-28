@@ -14,7 +14,7 @@ const linkVariants = cva(
         default: "text-gray-700 hover:text-black",
         primary: "text-blue-600 hover:text-blue-700",
         secondary: "text-gray-500 hover:text-gray-700",
-        ghost: "text-gray-600 hover:bg-gray-100 px-2 py-1 rounded",
+        ghost: "text-muted-foreground hover:bg-muted px-2 py-1 rounded",
         underline: "underline text-blue-600 hover:text-blue-800",
       },
       size: {

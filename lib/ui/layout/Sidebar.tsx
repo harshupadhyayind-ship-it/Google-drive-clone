@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   HardDrive,
@@ -92,8 +93,8 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
   // On mobile: fixed overlay when open, hidden when closed
   // On desktop: always visible as w-64
   const asideClass = isOpen
-    ? "fixed inset-y-0 left-0 z-50 flex flex-col w-64 h-full bg-white border-r p-4"
-    : "hidden md:flex md:flex-col md:w-64 h-full bg-white border-r p-4";
+    ? "fixed inset-y-0 left-0 z-50 flex flex-col w-64 h-full bg-sidebar border-r border-sidebar-border p-4"
+    : "hidden md:flex md:flex-col md:w-64 h-full bg-sidebar border-r border-sidebar-border p-4";
 
   return (
     <>
@@ -108,8 +109,8 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
       <aside className={asideClass}>
         {/* Logo + close button */}
         <div className="flex items-center justify-between mb-6 px-2">
-          <Link href="/dashboard" className="text-xl font-semibold">
-            Drive
+          <Link href="/dashboard">
+            <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
           </Link>
           <Button variant="ghost" size="icon" className="md:hidden" onClick={onClose}>
             <X size={18} />
@@ -159,10 +160,10 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
                 key={item.name}
                 href={item.path}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
                   isActive
-                    ? "bg-blue-100 text-blue-600 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-primary/15 text-primary font-medium border border-primary/20"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                 }`}
               >
                 <Icon size={18} />
@@ -175,22 +176,22 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
         {/* Storage */}
         <div className="mt-auto pt-6">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs text-gray-500">Storage</p>
-            <p className="text-xs text-gray-500">{storage.percent}%</p>
+            <p className="text-xs text-muted-foreground">Storage</p>
+            <p className="text-xs text-muted-foreground">{storage.percent}%</p>
           </div>
-          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-sidebar-accent h-2 rounded-full overflow-hidden">
             <div
               className={`h-2 rounded-full transition-all ${
                 storage.percent >= 90
                   ? "bg-red-500"
                   : storage.percent >= 70
                   ? "bg-yellow-500"
-                  : "bg-blue-500"
+                  : "bg-gradient-to-r from-purple-500 to-blue-500"
               }`}
               style={{ width: `${storage.percent}%` }}
             />
           </div>
-          <p className="text-xs mt-1 text-gray-600">
+          <p className="text-xs mt-1 text-muted-foreground">
             {storage.usedMB} MB of {storage.totalMB} MB used
           </p>
         </div>

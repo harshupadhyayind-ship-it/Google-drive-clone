@@ -23,7 +23,6 @@ export const NotificationBell = () => {
   const panelRef                      = useRef<HTMLDivElement>(null);
   const bellRef                       = useRef<HTMLButtonElement>(null);
 
-  // ── fetch list ──────────────────────────────────────────────────────────────
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
     try {
@@ -36,14 +35,10 @@ export const NotificationBell = () => {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+  useEffect(() => { fetchNotifications(); }, [fetchNotifications]);
 
-  // ── real-time SSE ────────────────────────────────────────────────────────────
   useEffect(() => {
     const es = new EventSource("/api/notifications/stream");
-
     es.addEventListener("notification", (e) => {
       try {
         const notif: NotificationItem = JSON.parse(e.data);
@@ -51,17 +46,11 @@ export const NotificationBell = () => {
         setUnread((c) => c + 1);
       } catch {}
     });
-
-    es.addEventListener("ping", () => {/* keep-alive */});
-
-    es.onerror = () => {
-      // Browser will auto-reconnect; nothing to do
-    };
-
+    es.addEventListener("ping", () => {});
+    es.onerror = () => {};
     return () => es.close();
   }, []);
 
-  // ── mark all read when panel opens ──────────────────────────────────────────
   useEffect(() => {
     if (!open || unread === 0) return;
     fetch("/api/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) })
@@ -72,17 +61,12 @@ export const NotificationBell = () => {
       .catch(() => {});
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── close on outside click ───────────────────────────────────────────────────
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
-        panelRef.current &&
-        !panelRef.current.contains(e.target as Node) &&
-        bellRef.current &&
-        !bellRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
+        panelRef.current && !panelRef.current.contains(e.target as Node) &&
+        bellRef.current  && !bellRef.current.contains(e.target as Node)
+      ) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -100,7 +84,6 @@ export const NotificationBell = () => {
 
   return (
     <div className="relative">
-      {/* Bell button */}
       <Button
         ref={bellRef}
         variant="ghost"
@@ -116,16 +99,15 @@ export const NotificationBell = () => {
         )}
       </Button>
 
-      {/* Panel */}
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white border rounded-2xl shadow-xl z-50 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-card border border-border rounded-2xl shadow-xl z-50 overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b">
-            <p className="text-sm font-semibold text-gray-800">Notifications</p>
-            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <p className="text-sm font-semibold text-foreground">Notifications</p>
+            <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
               <X size={15} />
             </button>
           </div>
@@ -133,13 +115,13 @@ export const NotificationBell = () => {
           {/* List */}
           <div className="max-h-80 overflow-y-auto">
             {loading && (
-              <p className="text-sm text-gray-400 text-center py-6">Loading…</p>
+              <p className="text-sm text-muted-foreground text-center py-6">Loading…</p>
             )}
 
             {!loading && items.length === 0 && (
               <div className="text-center py-10 space-y-2">
-                <Bell size={28} className="mx-auto text-gray-200" />
-                <p className="text-sm text-gray-400">No notifications yet</p>
+                <Bell size={28} className="mx-auto text-muted-foreground/30" />
+                <p className="text-sm text-muted-foreground">No notifications yet</p>
               </div>
             )}
 
@@ -154,34 +136,25 @@ export const NotificationBell = () => {
                     target={isExternal ? "_blank" : undefined}
                     rel={isExternal ? "noopener noreferrer" : undefined}
                     onClick={() => setOpen(false)}
-                    className={`flex items-start gap-3 px-4 py-3 border-b last:border-0 transition-colors cursor-pointer hover:bg-gray-50 ${
-                      n.read ? "bg-white" : "bg-blue-50"
+                    className={`flex items-start gap-3 px-4 py-3 border-b border-border last:border-0 transition-colors cursor-pointer hover:bg-muted ${
+                      n.read ? "bg-card" : "bg-primary/5"
                     }`}
                   >
-                    {/* Icon */}
-                    <div
-                      className={`p-2 rounded-lg shrink-0 mt-0.5 ${
-                        n.itemType === "folder"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-blue-100 text-blue-600"
-                      }`}
-                    >
-                      {n.itemType === "folder" ? (
-                        <Folder size={14} />
-                      ) : (
-                        <FileText size={14} />
-                      )}
+                    <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                      n.itemType === "folder"
+                        ? "bg-yellow-500/15 text-yellow-500"
+                        : "bg-purple-500/15 text-purple-400"
+                    }`}>
+                      {n.itemType === "folder" ? <Folder size={14} /> : <FileText size={14} />}
                     </div>
 
-                    {/* Text */}
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-gray-800 leading-snug">{n.message}</p>
-                      <p className="text-xs text-gray-400 mt-1">{timeAgo(n.createdAt)}</p>
+                      <p className="text-sm text-foreground leading-snug">{n.message}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{timeAgo(n.createdAt)}</p>
                     </div>
 
-                    {/* Unread dot */}
                     {!n.read && (
-                      <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1.5" />
+                      <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />
                     )}
                   </Link>
                 );

@@ -17,7 +17,7 @@ export function Breadcrumb({
 
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+      <ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         {items.map((item, idx) => {
           const isLast = idx === items.length - 1;
           const current = item.isCurrent ?? isLast;
@@ -27,12 +27,12 @@ export function Breadcrumb({
               {item.href && !current ? (
                 <Link
                   href={item.href}
-                  className="hover:text-gray-900 hover:underline"
+                  className="hover:text-foreground hover:underline"
                 >
                   {item.label}
                 </Link>
               ) : (
-                <span aria-current={current ? "page" : undefined} className="text-gray-900">
+                <span aria-current={current ? "page" : undefined} className="text-foreground font-medium">
                   {item.label}
                 </span>
               )}

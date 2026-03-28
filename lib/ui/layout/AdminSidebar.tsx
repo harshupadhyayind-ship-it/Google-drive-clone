@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, FileText, Folder, X } from "lucide-react";
 
@@ -31,22 +32,25 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
 
       <aside
         className={`
-          fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white p-4 flex flex-col
+          fixed inset-y-0 left-0 z-40 w-64 bg-sidebar border-r border-sidebar-border text-sidebar-foreground p-4 flex flex-col
           transition-transform duration-200
           md:static md:translate-x-0 md:z-auto
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 px-2">
-          <h2 className="text-lg font-semibold">Admin Panel</h2>
+        <div className="flex items-center justify-between mb-2 px-2">
+          <Link href="/admin">
+            <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
+          </Link>
           <button
-            className="md:hidden text-gray-400 hover:text-white"
+            className="md:hidden text-muted-foreground hover:text-foreground"
             onClick={onClose}
           >
             <X size={18} />
           </button>
         </div>
+        <p className="text-xs text-purple-400 font-medium px-2 mb-6 tracking-widest uppercase">Admin Panel</p>
 
         {/* Menu */}
         <nav className="flex flex-col gap-1">
@@ -59,10 +63,10 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
                 key={item.name}
                 href={item.path}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
                   isActive
-                    ? "bg-gray-800 text-white font-medium"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "bg-primary/15 text-primary font-medium border border-primary/20"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                 }`}
               >
                 <Icon size={18} />
@@ -73,7 +77,7 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
         </nav>
 
         {/* Footer */}
-        <div className="mt-auto pt-6 text-xs text-gray-400">Admin Controls</div>
+        <div className="mt-auto pt-6 text-xs text-muted-foreground/50">NovaDrive Admin Controls</div>
       </aside>
     </>
   );
