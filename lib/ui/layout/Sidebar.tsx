@@ -45,7 +45,7 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
   const folderInputRef = useRef<HTMLInputElement | null>(null);
 
   const { user, setFolders } = useDrive();
-  const { uploadFiles, uploadFolderFileList } = useUpload();
+  const { uploadFiles, uploadFolderFileList, storageVersion } = useUpload();
   const currentFolderId = searchParams.get("folderId") ?? "";
 
   const [open,       setOpen]       = useState(false);
@@ -61,12 +61,15 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
     }
   }, []);
 
-  useEffect(() => {
+  const fetchStorage = () => {
     fetch("/api/storage")
       .then((r) => r.json())
       .then((d) => { if (d.usedMB !== undefined) setStorage(d); })
       .catch(() => {});
-  }, []);
+  };
+
+  // Fetch on mount and after every upload batch
+  useEffect(() => { fetchStorage(); }, [storageVersion]);
 
   const handleCreateFolder = async () => {
     if (!folderName.trim()) return;
