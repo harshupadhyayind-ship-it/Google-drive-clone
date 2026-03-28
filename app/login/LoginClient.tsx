@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { Input } from "@/lib/ui/components/Input";
 import { Button } from "@/lib/ui/components/Button";
 
@@ -114,6 +115,14 @@ export default function LoginClient() {
           </svg>
           Continue with Google
         </Button>
+
+        {/* Register link */}
+        <p className="text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="text-primary font-medium hover:underline underline-offset-4">
+            Create one
+          </Link>
+        </p>
       </form>
     </div>
   );
