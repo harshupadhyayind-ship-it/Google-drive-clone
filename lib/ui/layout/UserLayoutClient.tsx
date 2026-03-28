@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
 import { ToastProvider } from "@/lib/context/ToastContext";
+import { UploadProvider } from "@/lib/context/UploadContext";
+import { DragDropZone } from "@/lib/ui/drive/DragDropZone";
 
 type Props = {
   userId: string;
@@ -15,15 +17,19 @@ export const UserLayoutClient = ({ userId, children }: Props) => {
 
   return (
     <ToastProvider>
-      <Sidebar
-        userId={userId}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="p-4 overflow-auto flex-1 bg-background">{children}</main>
-      </div>
+      <UploadProvider>
+        <Sidebar
+          userId={userId}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar onMenuClick={() => setSidebarOpen(true)} />
+          <DragDropZone>
+            <main className="p-4 overflow-auto flex-1 bg-background">{children}</main>
+          </DragDropZone>
+        </div>
+      </UploadProvider>
     </ToastProvider>
   );
 };
