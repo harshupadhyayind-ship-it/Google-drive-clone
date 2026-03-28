@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NovaDrive",
-  description: "NovaDrive — Your Files. Anywhere.",
+  title: "VegaDrive",
+  description: "VegaDrive — Your Files. Anywhere.",
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
@@ -45,7 +45,7 @@ export default function RootLayout({
         {/* Blocking script: apply saved theme BEFORE first paint — zero white flash */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('novadrive-theme');if(t==='light'){document.documentElement.classList.add('light');document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('vegadrive-theme');if(t==='light'){document.documentElement.classList.add('light');document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
           }}
         />
       </head>

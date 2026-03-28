@@ -42,12 +42,12 @@ export default function RegisterClient() {
         className="w-full max-w-md space-y-4 p-8 bg-card border border-border rounded-2xl shadow-2xl"
       >
         <div className="flex justify-center mb-2">
-          <Image src="/logo.svg" alt="NovaDrive" width={180} height={45} priority />
+          <Image src="/logo.svg" alt="VegaDrive" width={180} height={45} priority />
         </div>
         <h1 className="text-lg font-semibold text-center text-foreground">
           Create Account
         </h1>
-        <p className="text-xs text-center text-muted-foreground -mt-2">Join NovaDrive — free forever</p>
+        <p className="text-xs text-center text-muted-foreground -mt-2">Join VegaDrive — free forever</p>
 
         {/* Name */}
         <div>

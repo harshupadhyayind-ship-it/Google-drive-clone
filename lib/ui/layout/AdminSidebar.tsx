@@ -41,7 +41,7 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-2 px-2">
           <Link href="/admin">
-            <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
+            <Image src="/logo.svg" alt="VegaDrive" width={130} height={32} priority />
           </Link>
           <button
             className="md:hidden text-muted-foreground hover:text-foreground"
@@ -77,7 +77,7 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
         </nav>
 
         {/* Footer */}
-        <div className="mt-auto pt-6 text-xs text-muted-foreground/50">NovaDrive Admin Controls</div>
+        <div className="mt-auto pt-6 text-xs text-muted-foreground/50">VegaDrive Admin Controls</div>
       </aside>
     </>
   );

@@ -47,10 +47,10 @@ export default function LoginClient() {
         className="w-full max-w-md space-y-4 p-8 bg-card border border-border rounded-2xl shadow-2xl"
       >
         <div className="flex justify-center mb-2">
-          <Image src="/logo.svg" alt="NovaDrive" width={180} height={45} priority />
+          <Image src="/logo.svg" alt="VegaDrive" width={180} height={45} priority />
         </div>
         <h1 className="text-lg font-semibold text-center text-foreground">Welcome back</h1>
-        <p className="text-xs text-center text-muted-foreground -mt-2">Sign in to your NovaDrive account</p>
+        <p className="text-xs text-center text-muted-foreground -mt-2">Sign in to your VegaDrive account</p>
 
         {/* Email */}
         <div>

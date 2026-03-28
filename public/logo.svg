@@ -30,11 +30,11 @@
     <circle cx="45" cy="14" r="0.8" fill="#60a5fa" opacity="0.6"/>
   </g>
 
-  <!-- "Nova" bold gradient -->
+  <!-- "Vega" bold gradient -->
   <text x="66" y="40"
     font-family="'Segoe UI',Helvetica,Arial,sans-serif"
     font-size="26" font-weight="800" letter-spacing="-0.5"
-    fill="url(#textGrad)">Nova</text>
+    fill="url(#textGrad)">Vega</text>
 
   <!-- "Drive" light white -->
   <text x="131" y="40"

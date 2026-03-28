@@ -101,7 +101,7 @@ export const Sidebar = ({ userId, isOpen, onClose }: Props) => {
         {/* Logo + close */}
         <div className="flex items-center justify-between mb-6 px-2">
           <Link href="/">
-            <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
+            <Image src="/logo.svg" alt="VegaDrive" width={130} height={32} priority />
           </Link>
           <Button variant="ghost" size="icon" className="md:hidden" onClick={onClose}>
             <X size={18} />
