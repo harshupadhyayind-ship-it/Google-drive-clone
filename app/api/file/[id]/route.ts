@@ -17,6 +17,7 @@ export async function PATCH(
   if (body.name !== undefined) update.name = body.name;
   if (body.isStarred !== undefined) update.isStarred = body.isStarred;
   if (body.lastAccessedAt !== undefined) update.lastAccessedAt = body.lastAccessedAt;
+  if (body.folderId !== undefined) update.folderId = body.folderId ?? null; // move file
 
   if (body.isTrashed !== undefined) {
     update.isTrashed = body.isTrashed;

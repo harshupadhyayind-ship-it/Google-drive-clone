@@ -9,11 +9,13 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { InputDialog } from "@/lib/ui/components/InputDialog";
 import { ShareDialog } from "./ShareDialog";
+import { MoveDialog } from "./MoveDialog";
 import { Star, Trash2, X, CheckSquare } from "lucide-react";
 import { Button } from "@/lib/ui/components/Button";
 
 type RenameTarget = { id: string; name: string; type: "file" | "folder" };
 type ShareTarget  = { id: string; name: string; type: "file" | "folder" };
+type MoveTarget   = { id: string; name: string; type: "file" | "folder" };
 type SelectedItem = { id: string; type: "file" | "folder" };
 
 export const DashboardContent = () => {
@@ -28,6 +30,7 @@ export const DashboardContent = () => {
   const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
   const [renameName,   setRenameName]   = useState("");
   const [shareTarget,  setShareTarget]  = useState<ShareTarget | null>(null);
+  const [moveTarget,   setMoveTarget]   = useState<MoveTarget  | null>(null);
 
   // ── Multi-select state ─────────────────────────────────────────────
   const [selected, setSelected] = useState<SelectedItem[]>([]);
@@ -131,6 +134,31 @@ export const DashboardContent = () => {
     }
   };
 
+  const handleMove = async (targetFolderId: string | null) => {
+    if (!moveTarget) return;
+    const { id, type } = moveTarget;
+    const endpoint = type === "file" ? `/api/file/${id}` : `/api/folder/${id}`;
+    const body     = type === "file" ? { folderId: targetFolderId } : { parentId: targetFolderId };
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error();
+      // Remove from current view — it now lives in a different folder
+      if (type === "file") {
+        setFiles((prev: any[]) => prev.filter((f) => f._id !== id));
+      } else {
+        setFolders((prev: any[]) => prev.filter((f) => f._id !== id));
+      }
+      toast.success("Moved successfully");
+    } catch {
+      toast.error("Failed to move");
+    }
+  };
+
   // ── Bulk action handlers ───────────────────────────────────────────
   const handleBulkStar = async (starValue: boolean) => {
     const results = await Promise.allSettled(
@@ -227,6 +255,7 @@ export const DashboardContent = () => {
               onRename={() => openRename(folder._id, folder.name, "folder")}
               onStar={() => handleStar(folder._id, "folder", !folder.isStarred)}
               onShare={() => setShareTarget({ id: folder._id, name: folder.name, type: "folder" })}
+              onMoveTo={() => setMoveTarget({ id: folder._id, name: folder.name, type: "folder" })}
               onMoveToTrash={() => handleMoveToTrash(folder._id, "folder")}
             />
           ))}
@@ -253,6 +282,7 @@ export const DashboardContent = () => {
               onRename={() => openRename(file._id, file.name, "file")}
               onStar={() => handleStar(file._id, "file", !file.isStarred)}
               onShare={() => setShareTarget({ id: file._id, name: file.name, type: "file" })}
+              onMoveTo={() => setMoveTarget({ id: file._id, name: file.name, type: "file" })}
               onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
             />
           ))}
@@ -330,6 +360,18 @@ export const DashboardContent = () => {
           itemId={shareTarget.id}
           itemType={shareTarget.type}
           itemName={shareTarget.name}
+        />
+      )}
+
+      {moveTarget && (
+        <MoveDialog
+          open={!!moveTarget}
+          onOpenChange={(open) => !open && setMoveTarget(null)}
+          itemId={moveTarget.id}
+          itemName={moveTarget.name}
+          itemType={moveTarget.type}
+          currentFolderId={parentId}
+          onMove={handleMove}
         />
       )}
     </div>

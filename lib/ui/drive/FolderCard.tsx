@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Folder, Pencil, Download, Trash, Star, Share2, Check } from "lucide-react";
+import { Folder, Pencil, Download, Trash, Star, Share2, Check, FolderInput } from "lucide-react";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 
 type Props = {
@@ -15,6 +15,7 @@ type Props = {
   onStar?: () => void;
   onShare?: () => void;
   onDownload?: () => void;
+  onMoveTo?: () => void;
   onMoveToTrash?: () => void;
 };
 
@@ -29,6 +30,7 @@ export const FolderCard = ({
   onStar,
   onShare,
   onDownload,
+  onMoveTo,
   onMoveToTrash,
 }: Props) => {
   const router = useRouter();
@@ -53,6 +55,11 @@ export const FolderCard = ({
       label: "Download",
       icon: <Download className="h-4 w-4" />,
       onClick: (e?: any) => { e?.stopPropagation(); onDownload?.(); },
+    },
+    {
+      label: "Move to",
+      icon: <FolderInput className="h-4 w-4" />,
+      onClick: (e?: any) => { e?.stopPropagation(); onMoveTo?.(); },
     },
     { separator: true },
     {

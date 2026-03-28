@@ -2,7 +2,7 @@
 
 import { getFileIcon } from "@/lib/utils/fileIcon";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
-import { Pencil, Download, Trash, Star, Share2, Check } from "lucide-react";
+import { Pencil, Download, Trash, Star, Share2, Check, FolderInput } from "lucide-react";
 
 type Props = {
   id: string;
@@ -16,6 +16,7 @@ type Props = {
   onStar?: () => void;
   onShare?: () => void;
   onDownload?: () => void;
+  onMoveTo?: () => void;
   onMoveToTrash?: () => void;
 };
 
@@ -31,6 +32,7 @@ export const FileCard = ({
   onStar,
   onShare,
   onDownload,
+  onMoveTo,
   onMoveToTrash,
 }: Props) => {
   const Icon = getFileIcon(name);
@@ -55,6 +57,11 @@ export const FileCard = ({
       label: "Download",
       icon: <Download className="h-4 w-4" />,
       onClick: (e?: any) => { e?.stopPropagation(); onDownload?.(); },
+    },
+    {
+      label: "Move to",
+      icon: <FolderInput className="h-4 w-4" />,
+      onClick: (e?: any) => { e?.stopPropagation(); onMoveTo?.(); },
     },
     { separator: true },
     {
