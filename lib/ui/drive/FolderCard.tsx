@@ -1,13 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { Folder, Pencil, Download, Trash, Star, Share2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Folder, Pencil, Download, Trash, Star, Share2, Check } from "lucide-react";
 import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 
 type Props = {
   name: string;
   href: string;
   isStarred?: boolean;
+  isSelected?: boolean;
+  selectionMode?: boolean;
+  onSelect?: () => void;
   onRename?: () => void;
   onStar?: () => void;
   onShare?: () => void;
@@ -19,12 +22,17 @@ export const FolderCard = ({
   name,
   href,
   isStarred,
+  isSelected,
+  selectionMode,
+  onSelect,
   onRename,
   onStar,
   onShare,
   onDownload,
   onMoveToTrash,
 }: Props) => {
+  const router = useRouter();
+
   const menuItems: MenuItem[] = [
     {
       label: "Rename",
@@ -55,26 +63,57 @@ export const FolderCard = ({
     },
   ];
 
+  const handleCardClick = () => {
+    if (selectionMode) {
+      onSelect?.();
+      return;
+    }
+    router.push(href);
+  };
+
   return (
-    <Link href={href}>
-      <div className="group flex items-center justify-between gap-3 p-3 border border-border rounded-xl bg-card hover:shadow-md hover:border-yellow-400/60 transition-all cursor-pointer">
+    <div
+      className={`group relative flex items-center justify-between gap-3 p-3 border rounded-xl bg-card
+        hover:shadow-md transition-all cursor-pointer
+        ${isSelected
+          ? "border-yellow-400/60 bg-yellow-500/5 shadow-sm shadow-yellow-500/10"
+          : "border-border hover:border-yellow-400/60"
+        }`}
+      onClick={handleCardClick}
+    >
+      {/* Checkbox — always in DOM, shown on hover or when in selection mode */}
+      <div
+        className={`absolute top-2 left-2 z-10 w-5 h-5 rounded-md border-2 flex items-center justify-center
+          transition-all duration-150 shrink-0
+          ${selectionMode || isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
+          ${isSelected
+            ? "bg-primary border-primary"
+            : "border-muted-foreground/50 bg-card hover:border-primary"
+          }`}
+        onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
+        role="checkbox"
+        aria-checked={!!isSelected}
+        aria-label={isSelected ? "Deselect folder" : "Select folder"}
+      >
+        {isSelected && <Check size={11} className="text-primary-foreground" strokeWidth={3} />}
+      </div>
 
-        {/* LEFT SIDE */}
-        <div className="flex items-center gap-3 overflow-hidden">
-          <div className="p-2 bg-yellow-500/15 text-yellow-500 rounded-lg">
-            <Folder size={18} />
-          </div>
-
-          <p className="text-sm font-medium text-foreground truncate group-hover:text-yellow-500">
-            {name}
-          </p>
+      {/* LEFT — icon + name */}
+      <div className="flex items-center gap-3 overflow-hidden pl-6">
+        <div className="p-2 bg-yellow-500/15 text-yellow-500 rounded-lg shrink-0">
+          <Folder size={18} />
         </div>
+        <p className="text-sm font-medium text-foreground truncate group-hover:text-yellow-500">
+          {name}
+        </p>
+      </div>
 
-        {/* RIGHT SIDE MENU */}
-        <div onClick={(e) => e.stopPropagation()}>
+      {/* RIGHT — three-dot menu (hidden in selection mode) */}
+      {!selectionMode && (
+        <div onClick={(e) => e.stopPropagation()} className="shrink-0">
           <DriveMenu items={menuItems} />
         </div>
-      </div>
-    </Link>
+      )}
+    </div>
   );
 };
