@@ -134,6 +134,24 @@ export const DashboardContent = () => {
     }
   };
 
+  const handleCreateCopy = async (id: string) => {
+    try {
+      const res = await fetch(`/api/file/${id}/copy`, { method: "POST" });
+      if (!res.ok) throw new Error();
+      const copy = await res.json();
+      // Insert the copy right after the original in the list
+      setFiles((prev: any[]) => {
+        const idx = prev.findIndex((f) => f._id === id);
+        const next = [...prev];
+        next.splice(idx + 1, 0, copy);
+        return next;
+      });
+      toast.success("Copy created");
+    } catch {
+      toast.error("Failed to create copy");
+    }
+  };
+
   const handleMove = async (targetFolderId: string | null) => {
     if (!moveTarget) return;
     const { id, type } = moveTarget;
@@ -283,6 +301,7 @@ export const DashboardContent = () => {
               onStar={() => handleStar(file._id, "file", !file.isStarred)}
               onShare={() => setShareTarget({ id: file._id, name: file.name, type: "file" })}
               onMoveTo={() => setMoveTarget({ id: file._id, name: file.name, type: "file" })}
+              onCreateCopy={() => handleCreateCopy(file._id)}
               onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
             />
           ))}
