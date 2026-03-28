@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
+import { MailWarning } from "lucide-react";
 import { Input } from "@/lib/ui/components/Input";
 import { Button } from "@/lib/ui/components/Button";
-
 
 type FormData = {
   email: string;
@@ -13,6 +15,9 @@ type FormData = {
 };
 
 export default function LoginClient() {
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -20,13 +25,20 @@ export default function LoginClient() {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
+    setLoginError(null);
+    setUnverifiedEmail(null);
+
     const res = await signIn("credentials", {
       ...data,
       redirect: false,
     });
 
     if (res?.error) {
-      alert("Invalid credentials");
+      if (res.error === "EMAIL_NOT_VERIFIED") {
+        setUnverifiedEmail(data.email);
+      } else {
+        setLoginError("Incorrect email or password.");
+      }
       return;
     }
 
@@ -34,9 +46,9 @@ export default function LoginClient() {
     const session = await sessionRes.json();
 
     if (session.user.role === "admin") {
-      window.location.href = "/admin";
+      window.location.href = "/overview";
     } else {
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     }
   };
 
@@ -47,10 +59,38 @@ export default function LoginClient() {
         className="w-full max-w-md space-y-4 p-8 bg-card border border-border rounded-2xl shadow-2xl"
       >
         <div className="flex justify-center mb-2">
-          <Image src="/logo.svg" alt="NovaDrive" width={180} height={45} priority />
+          <Image src="/logo.svg" alt="VegaDrive" width={180} height={45} priority />
         </div>
         <h1 className="text-lg font-semibold text-center text-foreground">Welcome back</h1>
-        <p className="text-xs text-center text-muted-foreground -mt-2">Sign in to your NovaDrive account</p>
+        <p className="text-xs text-center text-muted-foreground -mt-2">Sign in to your VegaDrive account</p>
+
+        {/* Generic error */}
+        {loginError && (
+          <p className="text-sm text-destructive text-center bg-destructive/10 rounded-lg px-3 py-2">
+            {loginError}
+          </p>
+        )}
+
+        {/* Unverified email banner */}
+        {unverifiedEmail && (
+          <div className="flex items-start gap-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl px-4 py-3">
+            <MailWarning size={18} className="text-yellow-500 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-medium text-foreground">Email not verified</p>
+              <p className="text-muted-foreground text-xs mt-0.5">
+                Please check your inbox for{" "}
+                <span className="font-medium text-foreground">{unverifiedEmail}</span>{" "}
+                and click the verification link.
+              </p>
+              <Link
+                href="/register"
+                className="text-xs text-primary hover:underline underline-offset-4 mt-1 inline-block"
+              >
+                Resend verification email →
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Email */}
         <div>
@@ -103,7 +143,7 @@ export default function LoginClient() {
           variant="outline"
           className="w-full dark:bg-white/5 dark:border-white/10 dark:hover:bg-white/10 dark:text-foreground"
           onClick={() =>
-            signIn("google", { callbackUrl: "/dashboard" })
+            signIn("google", { callbackUrl: "/" })
           }
         >
           <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -114,6 +154,14 @@ export default function LoginClient() {
           </svg>
           Continue with Google
         </Button>
+
+        {/* Register link */}
+        <p className="text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="text-primary font-medium hover:underline underline-offset-4">
+            Create one
+          </Link>
+        </p>
       </form>
     </div>
   );

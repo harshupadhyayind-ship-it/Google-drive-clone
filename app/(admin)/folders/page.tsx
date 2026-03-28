@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Folders" };
+
 import { connectDB } from "@/lib/db/connect";
 import { Folder } from "@/lib/db/models/Folder";
 import { FoldersContent } from "@/lib/ui/admin/FoldersContent";

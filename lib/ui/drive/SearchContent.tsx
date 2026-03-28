@@ -8,9 +8,11 @@ import { FolderCard } from "./FolderCard";
 import { FileCard } from "./FileCard";
 import { InputDialog } from "@/lib/ui/components/InputDialog";
 import { ShareDialog } from "./ShareDialog";
+import { FilePreviewModal, PreviewFile } from "./FilePreviewModal";
 
-type RenameTarget = { id: string; name: string; type: "file" | "folder" };
-type ShareTarget = { id: string; name: string; type: "file" | "folder" };
+type RenameTarget  = { id: string; name: string; type: "file" | "folder" };
+type ShareTarget   = { id: string; name: string; type: "file" | "folder" };
+type PreviewTarget = PreviewFile;
 
 export const SearchContent = () => {
   const searchParams = useSearchParams();
@@ -23,7 +25,8 @@ export const SearchContent = () => {
   const [loading, setLoading] = useState(false);
   const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
   const [renameName, setRenameName] = useState("");
-  const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null);
+  const [shareTarget,   setShareTarget]   = useState<ShareTarget   | null>(null);
+  const [previewTarget, setPreviewTarget] = useState<PreviewTarget | null>(null);
 
   useEffect(() => {
     if (!query || !user?.id) return;
@@ -131,7 +134,7 @@ export const SearchContent = () => {
               <FolderCard
                 key={folder._id}
                 name={folder.name}
-                href={`/dashboard?folderId=${folder._id}`}
+                href={`/?folderId=${folder._id}`}
                 isStarred={folder.isStarred}
                 onRename={() => openRename(folder._id, folder.name, "folder")}
                 onStar={() => handleStar(folder._id, "folder", !folder.isStarred)}
@@ -157,7 +160,12 @@ export const SearchContent = () => {
                 onRename={() => openRename(file._id, file.name, "file")}
                 onStar={() => handleStar(file._id, "file", !file.isStarred)}
                 onShare={() => setShareTarget({ id: file._id, name: file.name, type: "file" })}
+                onDownload={() => {
+                  const a = document.createElement("a");
+                  a.href = file.url; a.download = file.name; a.target = "_blank"; a.click();
+                }}
                 onMoveToTrash={() => handleMoveToTrash(file._id, "file")}
+                onPreview={() => setPreviewTarget({ name: file.name, url: file.url })}
               />
             ))}
           </div>
@@ -183,6 +191,14 @@ export const SearchContent = () => {
           itemName={shareTarget.name}
         />
       )}
+
+      <FilePreviewModal
+        open={!!previewTarget}
+        onClose={() => setPreviewTarget(null)}
+        file={previewTarget}
+        allFiles={files.map((f: any) => ({ name: f.name, url: f.url }))}
+        onNavigate={(f) => setPreviewTarget(f)}
+      />
     </div>
   );
 };

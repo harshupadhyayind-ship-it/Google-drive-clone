@@ -1,4 +1,8 @@
-// app/(user)/dashboard/recent/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Recent" };
+
+// app/(user)/recent/page.tsx
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

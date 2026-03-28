@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Users" };
+
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/db/models/User";
 import { File } from "@/lib/db/models/File";

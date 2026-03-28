@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Read saved preference after mount (client-only)
-    const saved = localStorage.getItem("novadrive-theme") as Theme | null;
+    const saved = localStorage.getItem("vegadrive-theme") as Theme | null;
     const resolved: Theme = saved === "light" ? "light" : "dark";
     setThemeState(resolved);
 
@@ -36,7 +36,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
-    localStorage.setItem("novadrive-theme", t);
+    localStorage.setItem("vegadrive-theme", t);
     document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(t);
   };

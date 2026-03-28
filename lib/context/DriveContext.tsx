@@ -89,7 +89,7 @@ export const DriveProvider = ({
   );
 
   // Important: `useState(initialData...)` only initializes once.
-  // When navigating between `/dashboard?folderId=...`, keep state in sync
+  // When navigating between `/?folderId=...`, keep state in sync
   // so the UI updates to the new folder.
   useEffect(() => {
     setFolders(initialData.folders);

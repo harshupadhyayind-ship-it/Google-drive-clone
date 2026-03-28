@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { Folder, FileText, Loader2 } from "lucide-react";
+import { DriveBreadcrumb } from "./DriveBreadcrumb";
 import Link from "next/link";
 import { useInfiniteScroll } from "@/lib/hooks/useInfiniteScroll";
 import { useDrive } from "@/lib/context/DriveContext";
@@ -35,7 +36,7 @@ export const RecentContent = ({ initialItems }: Props) => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Recent</h1>
+      <DriveBreadcrumb staticLabel="Recent" />
 
       {items.length === 0 && !loading ? (
         <p className="text-sm text-muted-foreground/60">No recent items</p>

@@ -1,4 +1,8 @@
-// app/(user)/dashboard/trash/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Trash" };
+
+// app/(user)/trash/page.tsx
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

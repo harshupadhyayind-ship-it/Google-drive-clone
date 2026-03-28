@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, FileText, Folder, X } from "lucide-react";
 
 const menuItems = [
-  { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
-  { name: "Users", path: "/admin/users", icon: Users },
-  { name: "Files", path: "/admin/files", icon: FileText },
-  { name: "Folders", path: "/admin/folders", icon: Folder },
+  { name: "Dashboard", path: "/overview",  icon: LayoutDashboard },
+  { name: "Users",     path: "/users",     icon: Users           },
+  { name: "Files",     path: "/files",     icon: FileText        },
+  { name: "Folders",   path: "/folders",   icon: Folder          },
 ];
 
 type Props = {
@@ -40,8 +40,8 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-2 px-2">
-          <Link href="/admin">
-            <Image src="/logo.svg" alt="NovaDrive" width={130} height={32} priority />
+          <Link href="/overview">
+            <Image src="/logo.svg" alt="VegaDrive" width={130} height={32} priority />
           </Link>
           <button
             className="md:hidden text-muted-foreground hover:text-foreground"
@@ -77,7 +77,7 @@ export const AdminSidebar = ({ isOpen, onClose }: Props) => {
         </nav>
 
         {/* Footer */}
-        <div className="mt-auto pt-6 text-xs text-muted-foreground/50">NovaDrive Admin Controls</div>
+        <div className="mt-auto pt-6 text-xs text-muted-foreground/50">VegaDrive Admin Controls</div>
       </aside>
     </>
   );

@@ -7,6 +7,7 @@ import { DriveMenu, MenuItem } from "../components/Menu/DriveMenu";
 type Props = {
   name: string;
   href: string;
+  viewMode?: "grid" | "list";
   isStarred?: boolean;
   isSelected?: boolean;
   selectionMode?: boolean;
@@ -22,6 +23,7 @@ type Props = {
 export const FolderCard = ({
   name,
   href,
+  viewMode = "grid",
   isStarred,
   isSelected,
   selectionMode,

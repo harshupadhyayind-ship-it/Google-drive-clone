@@ -14,8 +14,8 @@ type Story = StoryObj<typeof Breadcrumb>;
 export const Default: Story = {
   args: {
     items: [
-      { label: "My Drive", href: "/dashboard" },
-      { label: "Marketing", href: "/dashboard?folderId=1" },
+      { label: "My Drive", href: "/" },
+      { label: "Marketing", href: "/?folderId=1" },
       { label: "Q1 Reports", isCurrent: true },
     ],
   },
