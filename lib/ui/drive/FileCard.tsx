@@ -204,13 +204,14 @@ export const FileCard = ({
         {thumbKind === "pdf" && (
           <div className="w-full h-full overflow-hidden relative">
             <iframe
-              src={href}
+              src={`${href}#toolbar=1`}
               title={name}
               scrolling="no"
               style={{
                 width: 640, height: 900, border: "none",
-                transform: "scale(0.35)", transformOrigin: "top left",
+                transform: "scale(0.35)", transformOrigin: "top center",
                 pointerEvents: "none", userSelect: "none",
+                position: "absolute", left: "50%", marginLeft: -320,
               }}
             />
             <div className="absolute inset-0" />
